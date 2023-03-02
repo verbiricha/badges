@@ -21,7 +21,9 @@ export default function User({
   const { data } = useProfile({ pubkey, relays });
   const { name, picture, nip05, about } = data || {};
   const href =
-    relays?.length > 0 ? `/u/${encodeNprofile(pubkey, relays)}` : `/${pubkey}`;
+    relays?.length > 0
+      ? `/u/${encodeNprofile(pubkey, relays)}`
+      : `/p/${pubkey}`;
   const shortPubkey = pubkey && `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
 
   const component = (

@@ -1,12 +1,9 @@
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/700.css";
-import "@fontsource/inter/900.css";
-import "@fontsource/ibm-plex-mono/400.css";
-import "@fontsource/ibm-plex-mono/500.css";
-import "@fontsource/lato/400.css";
-import "@fontsource/lato/700.css";
-import "@fontsource/playfair-display/700.css";
-import "@fontsource/playfair-display/900.css";
+import "@fontsource/fraunces/400.css";
+import "@fontsource/fraunces/700.css";
+import "@fontsource/fraunces/900.css";
+import "@fontsource/epilogue/400.css";
+import "@fontsource/epilogue/500.css";
+
 import { mode } from "@chakra-ui/theme-tools";
 
 import "./App.css";
@@ -43,10 +40,17 @@ const colors = {
 const styles = {
   global: (props) => ({
     body: {
-      background: mode('#FDFDFF', '#141414')(props),
-      color: mode('#141414', '#FDFDFF')(props),
+      background: mode("#FFFDFF", "#1C1A38")(props),
+      color: mode("#1C1A38", "#FFFDFF")(props),
     },
   }),
 };
 
-export default extendTheme({ config, styles, colors });
+const fonts = {
+  heading: `'Fraunces', serif`,
+  body: `'Epilogue', sans-serif`,
+};
+
+const components = {};
+
+export default extendTheme({ config, styles, colors, fonts, components });

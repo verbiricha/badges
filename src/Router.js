@@ -1,11 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/index";
-import Tag from "./pages/tag";
-import Address from "./pages/address";
-import Article from "./pages/article";
+import New from "./pages/new";
 import Profile from "./pages/profile";
-import NProfile from "./pages/nprofile";
-import Write from "./pages/write";
+import Badge from "./pages/badge";
 
 export default createBrowserRouter([
   {
@@ -13,27 +10,15 @@ export default createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "/:p",
+    path: "/new",
+    element: <New />,
+  },
+  {
+    path: "/p/:p",
     element: <Profile />,
   },
   {
-    path: "/a/:naddr",
-    element: <Address />,
-  },
-  {
-    path: "/u/:nprofile",
-    element: <NProfile />,
-  },
-  {
-    path: "/:p/:d",
-    element: <Article />,
-  },
-  {
-    path: "/t/:t",
-    element: <Tag />,
-  },
-  {
-    path: "write",
-    element: <Write />,
+    path: "/b/:naddr",
+    element: <Badge />,
   },
 ]);

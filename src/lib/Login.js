@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { useColorMode, Flex, Button } from "@chakra-ui/react";
-import { MoonIcon, SunIcon, EditIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 import User from "./User";
 import useLoggedInUser from "./useLoggedInUser";
@@ -22,11 +22,6 @@ export default function Login() {
 
   return user ? (
     <Flex alignItems="center">
-      <Link to="/write">
-        <Button color="secondary.500" variant="unstyled">
-          <EditIcon />
-        </Button>
-      </Link>
       {themeSelector}
       <User size={["sm", "sm", "md"]} showUsername={false} pubkey={user} />
     </Flex>

@@ -1,10 +1,8 @@
 :root {
   --border-radius: 12px;
-  --font: "Inter", sans-serif;
-  --article-font: "Lato", sans-serif;
-  --article-heading: "Playfair Display", serif;
-  --font-headings: "Inter", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font: "Epilogue", sans-serif;
+  --font-headings: "Fraunces", serif;
+  --gradient: linear-gradient(90deg, #3145FF 0%, #9A23DF 26.04%, #DD00A3 53.65%, #F30274 77.6%, #F22755 100%);
 }
 
 * {

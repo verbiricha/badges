@@ -1,0 +1,23 @@
+.bevel-out {
+  --bg-width: calc(var(--width) - 2 * var(--border));
+  --bg-height: var(--height);
+}
+
+.bevel-out {
+  display: inline-block;
+  position: relative;
+  width: var(--width);
+  height: var(--height);
+  box-sizing: border-box;
+  clip-path: polygon(8% 0, 92% 0, 100% 8%, 100% 80%, 100% 100%, 0 100%, 0% 80%, 0 10%);
+}
+
+.bevel-out .bevel {
+  position: absolute;
+  top: var(--border);
+  left: var(--border);
+  width: var(--bg-width);
+  min-height: var(--bg-height);
+  clip-path: polygon(8% 0, 92% 0, 100% 8%, 100% 80%, 100% 100%, 0 100%, 0% 80%, 0 10%);
+}
+
