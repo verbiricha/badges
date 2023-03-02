@@ -16,15 +16,14 @@ const user = getKey("p");
 const relays = getJsonKey(`r:${user}`) ?? defaultRelays;
 const follows = getJsonKey(`f:${user}`) ?? [];
 const contacts = getJsonKey(`c:${user}`) ?? [];
-const selectedRelay =
-  getKey(`sel:${user}`) ?? relays.find((r) => r.options.read)?.url;
+const badges = [];
 
 const initialState = {
   user,
   relays,
   follows,
   contacts,
-  selectedRelay,
+  badges,
 };
 
 export const relaySlice = createSlice({
@@ -52,6 +51,9 @@ export const relaySlice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
+    setBadges(state, action) {
+      state.badges = action.payload;
+    },
   },
 });
 
@@ -63,6 +65,7 @@ export const {
   setUser,
   setFollows,
   setContacts,
+  setBadges,
 } = relaySlice.actions;
 
 export default relaySlice.reducer;

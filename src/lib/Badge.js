@@ -15,7 +15,7 @@ import { encodeNaddr, findTag } from "../nostr";
 import Username from "./Username";
 import useColors from "./useColors";
 
-export default function Badge({ ev, ...rest }) {
+export default function Badge({ ev, children, ...rest }) {
   const d = findTag(ev.tags, "d");
   const { surface, border, secondary, highlight } = useColors();
   const name = findTag(ev.tags, "name");
@@ -56,6 +56,7 @@ export default function Badge({ ev, ...rest }) {
         <Text mt={1} fontSize="xs">
           By: <Username color={highlight} pubkey={ev.pubkey} />
         </Text>
+        {children}
       </CardBody>
     </Card>
   );

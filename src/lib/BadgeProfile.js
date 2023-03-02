@@ -1,10 +1,30 @@
-import { Link } from "react-router-dom";
-import { Button, Box, Flex, Image, Heading, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  useToast,
+  Flex,
+  Image,
+  Heading,
+  Text,
+  FormControl,
+  Button,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { nip19 } from "nostr-tools";
 
-import { useNostrEvents, encodeNaddr, findTag } from "../nostr";
+import {
+  signEvent,
+  dateToUnix,
+  useNostr,
+  useNostrEvents,
+  findTag,
+} from "../nostr";
 
-import Hexagon from "./Hexagon";
+import { BADGE_AWARD, BADGE_DEFINITION } from "../Const";
+import { getPubkey } from "./useNip05";
+import ActionButton from "./ActionButton";
+import User from "./User";
 import Bevel from "./Bevel";
 import Username from "./Username";
 import useColors from "./useColors";
@@ -34,22 +54,119 @@ function BadgeStatus({ state, children, ...rest }) {
   );
 }
 
+function AwardBadge({ ev, ...rest }) {
+  const toast = useToast();
+  const d = findTag(ev.tags, "d");
+  const { publish } = useNostr();
+  const [value, setValue] = useState("");
+  const [ps, setPs] = useState([]);
+  const { secondary } = useColors();
+
+  async function addUser() {
+    try {
+      if (value.startsWith("npub")) {
+        const decoded = nip19.decode(value);
+        if (decoded.data) {
+          setPs((_ps) => ps.concat([decoded.data]));
+          setValue("");
+        }
+      } else {
+        const pk = await getPubkey(value);
+        if (pk) {
+          setPs((_ps) => ps.concat([pk]));
+          setValue("");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function awardBadge() {
+    const award = {
+      kind: BADGE_AWARD,
+      created_at: dateToUnix(),
+      content: "",
+      tags: [
+        ["a", `${BADGE_DEFINITION}:${ev.pubkey}:${d}`],
+        ...ps.map((p) => ["p", p]),
+      ],
+    };
+    try {
+      const signed = await signEvent(award);
+      console.log("signed", signed);
+      publish(signed);
+
+      toast({
+        title: "Badge awarded",
+        status: "success",
+      });
+
+      setPs([]);
+      setValue("");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <Flex alignItems="flex-start" flexDirection="column" {...rest}>
+      <Heading fontSize="2xl" mb={4}>
+        Award Badge
+      </Heading>
+      <Text color={secondary}>Add users by their npub or NIP-05:</Text>
+      <FormControl mt={3}>
+        <FormLabel>NIP-05 or npub</FormLabel>
+        <Flex alignItems="center">
+          <Input
+            type="text"
+            placeholder="npub or NIP-05"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Button
+            isDisabled={value.trim().length === 0}
+            ml={2}
+            onClick={addUser}
+          >
+            Add
+          </Button>
+        </Flex>
+      </FormControl>
+      <Flex flexDirection="column" mt={3}>
+        {ps.map((p) => (
+          <User key={p} mb={2} pubkey={p} />
+        ))}
+      </Flex>
+      <ActionButton
+        mt={12}
+        width="100%"
+        isDisabled={ps.length === 0}
+        onClick={awardBadge}
+      >
+        Award badge
+      </ActionButton>
+    </Flex>
+  );
+}
+
 export default function BadgeProfile({ ev, ...rest }) {
   const { user } = useSelector((s) => s.relay);
   const isMine = user === ev.pubkey;
   const collected = false;
-  const { fg, surface, border, secondary, highlight } = useColors();
+  const { secondary, highlight } = useColors();
   const d = findTag(ev.tags, "d");
   const awards = useNostrEvents({
     filter: {
-      kind: 8,
-      "#a": [`30009:${ev.pubkey}:${d}`],
+      kinds: [BADGE_AWARD],
+      "#a": [`${BADGE_DEFINITION}:${ev.pubkey}:${d}`],
+      authors: [ev.pubkey],
     },
   });
   const name = findTag(ev.tags, "name");
   const description = findTag(ev.tags, "description");
   const image = findTag(ev.tags, "image");
-  const thumb = findTag(ev.tags, "thumb");
+  //const thumb = findTag(ev.tags, "thumb");
   return (
     <Flex flexDirection="column" alignItems="center">
       <Bevel>
@@ -130,16 +247,7 @@ export default function BadgeProfile({ ev, ...rest }) {
           You have not collected this badge yet.
         </Text>
       )}
-      {isMine && (
-        <Button
-          mt={12}
-          width="260px"
-          color="white"
-          background="var(--gradient)"
-        >
-          Award badge
-        </Button>
-      )}
+      {isMine && <AwardBadge mt={4} ev={ev} />}
     </Flex>
   );
 }

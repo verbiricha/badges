@@ -1,13 +1,34 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NostrProvider, useNostr, useNostrEvents } from "./nostr";
-import { setRelays, setFollows, setContacts } from "./relaysStore";
-import { setKey, setJsonKey } from "./storage";
+import { setRelays, setFollows, setContacts, setBadges } from "./relaysStore";
+import { setJsonKey } from "./storage";
+import { PROFILE_BADGES } from "./Const";
 
 function NostrConnManager({ children }) {
   const dispatch = useDispatch();
   const { onDisconnect } = useNostr();
-  const { relays, user, selectedRelay } = useSelector((s) => s.relay);
+  const { relays, user } = useSelector((s) => s.relay);
+  const profileBadges = useNostrEvents({
+    filter: {
+      kinds: [PROFILE_BADGES],
+      "#d": ["profile_badges"],
+      authors: [user],
+    },
+    enabled: Boolean(user),
+  });
+
+  useEffect(() => {
+    const sorted = [...profileBadges.events];
+    sorted.sort((a, b) => b.created_at - a.created_at);
+    const last = sorted[0];
+
+    if (!last || !user) {
+      return;
+    }
+    dispatch(setBadges(last.tags.filter((t) => t[0] === "a" || t[0] === "e")));
+  }, [dispatch, user, profileBadges.events]);
+
   const { events } = useNostrEvents({
     filter: {
       kinds: [3],
@@ -42,12 +63,6 @@ function NostrConnManager({ children }) {
       console.error(error);
     }
   }, [events, user, dispatch]);
-
-  useEffect(() => {
-    if (user) {
-      setKey(`sel:${user}`, selectedRelay);
-    }
-  }, [user, selectedRelay]);
 
   useEffect(() => {
     if (user) {

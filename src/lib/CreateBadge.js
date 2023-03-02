@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 import {
   useToast,
+  Flex,
   Button,
   Heading,
   Text,
@@ -69,16 +70,8 @@ export default function CreateBadge() {
     }
   }
   return (
-    <>
+    <Flex margin="0 auto" px={4} flexDirection="column" maxWidth="720px">
       <Heading mb={3}>Create a badge</Heading>
-      <Text color={secondary} mb={3}>
-        Each badge costs{" "}
-        <Text color="white" as="span" fontWeight={700}>
-          1,000
-        </Text>{" "}
-        sats to create. This helps cut down on badge spam and also with funding
-        Nostr projects such as this one.
-      </Text>
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input
@@ -114,7 +107,7 @@ export default function CreateBadge() {
         <FormLabel>Badge Thumbnail</FormLabel>
         <Input
           type="text"
-          placeholder="Thumnail URL"
+          placeholder="Thumbnail URL"
           value={thumbUrl}
           onChange={(e) => setThumbUrl(e.target.value)}
         />
@@ -129,6 +122,6 @@ export default function CreateBadge() {
       >
         Save and Publish
       </Button>
-    </>
+    </Flex>
   );
 }
