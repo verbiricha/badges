@@ -87,15 +87,19 @@ function useAwardedBadges(pubkey) {
 function Awarded({ pubkey }) {
   const toast = useToast();
   const { publish } = useNostr();
-  const { badges } = useSelector((s) => s.relay);
-  const aTags = badges.filter((t) => t[0] === "a").map((t) => t[1]);
+  const { user, badges } = useSelector((s) => s.relay);
+  const accepted = useAcceptedBadges(pubkey);
   const awarded = useAwardedBadges(pubkey);
+  const aTags = accepted.filter((t) => t[0] === "a").map((t) => t[1]);
+  const isMe = pubkey === user;
+
   return (
     <Flex flexDirection="column" className="badge-list">
       {awarded.map(({ badge, award }) => {
         const d = findTag(badge.tags, "d");
         const atag = `${badge.kind}:${badge.pubkey}:${d}`;
-        if (aTags.includes(atag)) {
+        // todo: accept/reject
+        if (isMe && aTags.includes(atag)) {
           return null;
         }
         const accept = [
@@ -103,6 +107,9 @@ function Awarded({ pubkey }) {
           ["e", award],
         ];
         async function acceptBadge() {
+          if (!isMe) {
+            return;
+          }
           const ev = {
             kind: PROFILE_BADGES,
             created_at: dateToUnix(),
@@ -122,12 +129,14 @@ function Awarded({ pubkey }) {
         }
         return (
           <Badge width="340px" key={badge.id} mb={3} ev={badge}>
-            <HStack mt={2} spacing={2}>
-              <Button colorScheme="green" onClick={acceptBadge}>
-                Accept
-              </Button>
-              <Button isDisabled>Reject</Button>
-            </HStack>
+            {isMe && (
+              <HStack mt={2} spacing={2}>
+                <Button colorScheme="green" onClick={acceptBadge}>
+                  Accept
+                </Button>
+                <Button isDisabled>Reject</Button>
+              </HStack>
+            )}
           </Badge>
         );
       })}
@@ -169,8 +178,20 @@ function chunks(array, chunkSize) {
   return result;
 }
 
+function useAcceptedBadges(pubkey) {
+  const { events } = useNostrEvents({
+    filter: {
+      kinds: [PROFILE_BADGES],
+      "#d": ["profile_badges"],
+      authors: [pubkey],
+    },
+  });
+  const ev = events[0];
+  return (ev?.tags ?? []).filter((t) => t[0] === "a" || t[0] === "e");
+}
+
 function Accepted({ pubkey }) {
-  const { badges } = useSelector((s) => s.relay);
+  const badges = useAcceptedBadges(pubkey);
   return (
     <Flex flexDirection="column" className="badge-list">
       {chunks(badges, 2).map(([a, e]) => (
@@ -182,6 +203,7 @@ function Accepted({ pubkey }) {
 
 export default function Badges({ pubkey }) {
   const { data } = useProfile({ pubkey });
+  const { user } = useSelector((s) => s.relay);
   const { secondary } = useColors();
   return (
     <Flex flexDirection="column" alignItems="center">
