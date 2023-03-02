@@ -22,7 +22,7 @@ export default function Profile() {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Habla</title>
+        <title>Badge</title>
       </Helmet>
       <Layout>{ev && <BadgeProfile ev={ev} />}</Layout>
     </>

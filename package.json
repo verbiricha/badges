@@ -1,5 +1,5 @@
 {
-  "name": "habla",
+  "name": "badge",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,10 +9,6 @@
     "@emotion/styled": "^11.10.6",
     "@fontsource/epilogue": "^4.5.11",
     "@fontsource/fraunces": "^4.5.11",
-    "@fontsource/ibm-plex-mono": "^4.5.13",
-    "@fontsource/inter": "^4.5.15",
-    "@fontsource/lato": "^4.5.10",
-    "@fontsource/playfair-display": "^4.5.13",
     "@reduxjs/toolkit": "^1.9.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
