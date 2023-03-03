@@ -49,7 +49,7 @@ export default function Badge({ ev, children, ...rest }) {
           </Flex>
         </Link>
       </CardHeader>
-      <CardBody color={secondary} mt="-60px" ml="70px">
+      <CardBody color={secondary} mt="-53px" ml="70px" pt={0}>
         <Text fontSize="13px" fontWeight={500} lineHeight="19px">
           {description}
         </Text>

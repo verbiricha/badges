@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   useToast,
   Flex,
@@ -19,6 +20,7 @@ import {
   useNostr,
   useNostrEvents,
   findTag,
+  encodeNaddr,
 } from "../nostr";
 
 import { BADGE_AWARD, BADGE_DEFINITION } from "../Const";
@@ -29,7 +31,7 @@ import Bevel from "./Bevel";
 import Username from "./Username";
 import useColors from "./useColors";
 
-function BadgeStatus({ state, children, ...rest }) {
+export function BadgeStatus({ state, children, ...rest }) {
   const color = (() => {
     switch (state) {
       case "collected":
@@ -166,6 +168,7 @@ export default function BadgeProfile({ ev, ...rest }) {
   const name = findTag(ev.tags, "name");
   const description = findTag(ev.tags, "description");
   const image = findTag(ev.tags, "image");
+  const naddr = encodeNaddr(ev);
   //const thumb = findTag(ev.tags, "thumb");
   return (
     <Flex flexDirection="column" alignItems="center">
@@ -246,6 +249,11 @@ export default function BadgeProfile({ ev, ...rest }) {
         >
           You have not collected this badge yet.
         </Text>
+      )}
+      {isMine && (
+        <Link to={`/b/${naddr}/edit`}>
+          <Button mt={4}>Edit</Button>
+        </Link>
       )}
       {isMine && <AwardBadge mt={4} ev={ev} />}
     </Flex>
