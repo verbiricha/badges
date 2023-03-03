@@ -5,7 +5,6 @@ import {
   useToast,
   Button,
   Flex,
-  Box,
   HStack,
   Tabs,
   TabList,
@@ -204,7 +203,6 @@ function Accepted({ pubkey }) {
 
 export default function Badges({ pubkey }) {
   const { data } = useProfile({ pubkey });
-  const { user } = useSelector((s) => s.relay);
   const { secondary } = useColors();
   return (
     <Flex flexDirection="column" alignItems="center">
