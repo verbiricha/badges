@@ -44,7 +44,7 @@ export default function Badge({ ev, children, ...rest }) {
               />
             </Box>
             <Flex flexDirection="column">
-              <Heading fontSize="19px" fontWeight={700} lineHeight="23.43px">
+              <Heading fontSize="16px" fontWeight={700} lineHeight="23px">
                 {name || d}
               </Heading>
             </Flex>

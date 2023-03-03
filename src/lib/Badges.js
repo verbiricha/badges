@@ -98,18 +98,11 @@ function Awarded({ pubkey }) {
       {awarded.map(({ badge, award }) => {
         const d = findTag(badge.tags, "d");
         const atag = `${badge.kind}:${badge.pubkey}:${d}`;
-        // todo: accept/reject
-        if (isMe && aTags.includes(atag)) {
-          return null;
-        }
         const accept = [
           ["a", atag],
           ["e", award],
         ];
         async function acceptBadge() {
-          if (!isMe) {
-            return;
-          }
           const ev = {
             kind: PROFILE_BADGES,
             created_at: dateToUnix(),
@@ -118,10 +111,30 @@ function Awarded({ pubkey }) {
           };
           try {
             const signed = await signEvent(ev, privateKey);
-
             publish(signed);
             toast({
               title: "Badge accepted",
+              status: "success",
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        async function rejectBadge() {
+          const filteredBadges = chunks(badges, 2)
+            .filter(([a, e]) => e[1] !== award)
+            .flat();
+          const ev = {
+            kind: PROFILE_BADGES,
+            created_at: dateToUnix(),
+            tags: [["d", "profile_badges"], ...filteredBadges],
+            content: "",
+          };
+          try {
+            const signed = await signEvent(ev, privateKey);
+            publish(signed);
+            toast({
+              title: "Badge rejected",
               status: "success",
             });
           } catch (error) {
@@ -132,10 +145,19 @@ function Awarded({ pubkey }) {
           <Badge width="340px" key={badge.id} mb={3} ev={badge}>
             {isMe && (
               <HStack mt={2} spacing={2}>
-                <Button colorScheme="green" onClick={acceptBadge}>
+                <Button
+                  isDisabled={aTags.includes(atag)}
+                  colorScheme="green"
+                  onClick={acceptBadge}
+                >
                   Accept
                 </Button>
-                <Button isDisabled>Reject</Button>
+                <Button
+                  isDisabled={!aTags.includes(atag)}
+                  onClick={rejectBadge}
+                >
+                  Reject
+                </Button>
               </HStack>
             )}
           </Badge>
