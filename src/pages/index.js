@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Box } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
 
@@ -21,7 +20,7 @@ export default function Home() {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Badge</title>
+        <title>Badges</title>
       </Helmet>
       <Layout>
         <SignUp />

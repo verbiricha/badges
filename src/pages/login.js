@@ -8,7 +8,7 @@ export default function Login() {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Badge</title>
+        <title>Badges</title>
       </Helmet>
       <Layout>
         <SignUp />

@@ -14,7 +14,7 @@ export default function Profile() {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Badge</title>
+        <title>Badges</title>
       </Helmet>
       <Layout>
         <Badges key={pubkey} pubkey={pubkey} />
