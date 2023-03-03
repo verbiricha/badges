@@ -2,7 +2,6 @@
   --border-radius: 12px;
   --font: "Epilogue", sans-serif;
   --font-headings: "Fraunces", serif;
-  --gradient: linear-gradient(90deg, #3145FF 0%, #9A23DF 26.04%, #DD00A3 53.65%, #F30274 77.6%, #F22755 100%);
 }
 
 * {
