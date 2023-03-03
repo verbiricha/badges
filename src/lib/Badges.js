@@ -106,6 +106,7 @@ function Awarded({ pubkey }) {
           const ev = {
             kind: PROFILE_BADGES,
             created_at: dateToUnix(),
+            pubkey: user,
             tags: [["d", "profile_badges"], ...badges, ...accept],
             content: "",
           };
@@ -127,6 +128,7 @@ function Awarded({ pubkey }) {
           const ev = {
             kind: PROFILE_BADGES,
             created_at: dateToUnix(),
+            pubkey: user,
             tags: [["d", "profile_badges"], ...filteredBadges],
             content: "",
           };
