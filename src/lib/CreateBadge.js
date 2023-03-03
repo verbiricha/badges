@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import {
   useToast,
   Flex,
-  Button,
   Heading,
   Text,
   FormControl,
@@ -12,22 +12,25 @@ import {
   Input,
   Textarea,
   FormHelperText,
+  Image,
 } from "@chakra-ui/react";
 
+import ActionButton from "./ActionButton";
 import Badge from "./Badge";
 
-import { dateToUnix, signEvent, useNostr } from "../nostr";
-import useColors from "./useColors";
+import { dateToUnix, signEvent, useNostr, encodeNaddr } from "../nostr";
 
 export default function CreateBadge() {
   const toast = useToast();
+  const [createdBadge, setCreatedBadge] = useState();
   const { user } = useSelector((s) => s.relay);
   const { publish } = useNostr();
-  const { secondary } = useColors();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [thumbUrl, setThumbUrl] = useState("");
+  const isValidBadge = name.trim().length > 0;
   const slug = name
     .toLowerCase()
     .replace(/ /g, "-")
@@ -61,6 +64,7 @@ export default function CreateBadge() {
     try {
       const signed = await signEvent(ev);
       publish(signed);
+      setCreatedBadge(signed);
       toast({
         title: "Badge created",
         status: "success",
@@ -69,7 +73,15 @@ export default function CreateBadge() {
       console.error(error);
     }
   }
-  return (
+
+  function goToBadge() {
+    if (!createdBadge) {
+      return;
+    }
+
+    navigate(`/b/${encodeNaddr(createdBadge)}`);
+  }
+  return !createdBadge ? (
     <Flex margin="0 auto" px={4} flexDirection="column" maxWidth="720px">
       <Heading mb={3}>Create a badge</Heading>
       <FormControl>
@@ -114,14 +126,24 @@ export default function CreateBadge() {
       </FormControl>
       <Heading my={3}>Preview</Heading>
       <Badge ev={draft} />
-      <Button
-        color="white"
-        background="var(--gradient)"
-        mt={10}
-        onClick={onCreate}
-      >
+      <ActionButton isDisabled={!isValidBadge} mt={10} onClick={onCreate}>
         Save and Publish
-      </Button>
+      </ActionButton>
+    </Flex>
+  ) : (
+    <Flex
+      margin="0 auto"
+      px={4}
+      alignItems="center"
+      flexDirection="column"
+      maxWidth="720px"
+    >
+      <Heading mb={3}>Success!</Heading>
+      <Text mb={4}>You have created a badge!</Text>
+      <Image src="/cat.png" alt="Success!" width="280px" height="322px" />
+      <ActionButton mt={10} onClick={goToBadge}>
+        Go to Badge
+      </ActionButton>
     </Flex>
   );
 }

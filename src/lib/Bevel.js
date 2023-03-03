@@ -2,6 +2,7 @@ import "./Bevel.css";
 
 import { useColorModeValue, Box } from "@chakra-ui/react";
 
+import Star from "../icons/Star";
 import useColors from "./useColors";
 
 export default function Bevel({
@@ -22,6 +23,12 @@ export default function Bevel({
       background={`linear-gradient(180deg, ${from}, ${to});`}
     >
       <Box className="bevel" background={bg}>
+        <Box position="absolute" top="30px" left="26px">
+          <Star />
+        </Box>
+        <Box position="absolute" top="30px" right="26px">
+          <Star />
+        </Box>
         {children}
       </Box>
     </Box>

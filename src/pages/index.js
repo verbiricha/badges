@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
 
 import { useNostrEvents } from "../nostr";
