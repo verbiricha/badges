@@ -7,7 +7,7 @@ import User from "./User";
 import useLoggedInUser from "./useLoggedInUser";
 
 export default function Login() {
-  const { user, logIn } = useLoggedInUser();
+  const { user, logOut } = useLoggedInUser();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const themeSelector = (
@@ -23,6 +23,9 @@ export default function Login() {
   return user ? (
     <Flex alignItems="center">
       {themeSelector}
+      <Button mr={2} onClick={logOut}>
+        Log out
+      </Button>
       <Link to="/new">
         <ActionButton mr={2}>New</ActionButton>
       </Link>
@@ -31,11 +34,9 @@ export default function Login() {
   ) : (
     <Flex>
       {themeSelector}
-      {window.nostr && (
-        <Button size="md" onClick={logIn}>
-          Login
-        </Button>
-      )}
+      <Link to="/login">
+        <Button size="md">Login</Button>
+      </Link>
     </Flex>
   );
 }

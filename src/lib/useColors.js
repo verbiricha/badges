@@ -11,11 +11,16 @@ export default function useColors() {
     "linear-gradient(180deg, rgba(255,255,255,.3), rgba(255,255,255,0))",
     "linear-gradient(180deg, rgba(0,0,0,.3), rgba(0,0,0,0))"
   );
+  const gradient = useColorModeValue(
+    "linear-gradient(90deg, #E09641 0%, #F07157 25.52%, #EA537C 50%, #DC4A92 72.92%, #B04EB6 100%)",
+    "linear-gradient(90deg, #3145FF 0%, #9A23DF 26.04%, #DD00A3 53.65%, #F30274 77.6%, #F22755 100%)"
+  );
 
   return {
     fg,
     bg,
     subtleGradient,
+    gradient,
     secondary,
     surface,
     highlight,

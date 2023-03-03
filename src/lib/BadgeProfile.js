@@ -179,7 +179,7 @@ export default function BadgeProfile({ ev, ...rest }) {
               mt={12}
               alt={name}
               src={image}
-              width="210px"
+              width="190px"
               height="210px"
             />
           )}

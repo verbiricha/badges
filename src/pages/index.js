@@ -1,17 +1,22 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Flex, Box } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
+import { useSelector } from "react-redux";
 
-import { useNostrEvents } from "../nostr";
-import Badge from "../lib/Badge";
+import SignUp from "../lib/SignUp";
 import Layout from "../lib/Layout";
 
 export default function Home() {
-  const { events } = useNostrEvents({
-    filter: {
-      kinds: [30009],
-      limit: 42,
-    },
-  });
+  const navigate = useNavigate();
+  const { user } = useSelector((s) => s.relay);
+
+  useEffect(() => {
+    if (user) {
+      navigate(`/p/${user}`);
+    }
+  }, [user]);
+
   return (
     <>
       <Helmet>
@@ -19,17 +24,7 @@ export default function Home() {
         <title>Badge</title>
       </Helmet>
       <Layout>
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          flexDirection="column"
-          margin="0 auto"
-          width="360px"
-        >
-          {events.map((ev) => (
-            <Badge width="340px" key={ev.id} mb={3} ev={ev} />
-          ))}
-        </Flex>
+        <SignUp />
       </Layout>
     </>
   );

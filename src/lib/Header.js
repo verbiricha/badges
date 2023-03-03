@@ -5,7 +5,13 @@ import Login from "./Login";
 
 export default function Header() {
   return (
-    <Flex alignItems="center" justifyContent="space-between" as="header" p={4}>
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      as="header"
+      p={4}
+      height="80px"
+    >
       <Link to="/">
         <Heading as="h1">Badge</Heading>
       </Link>
