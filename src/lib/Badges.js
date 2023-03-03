@@ -211,7 +211,7 @@ export default function Badges({ pubkey }) {
       <Bevel>
         <Flex padding={2} alignItems="center" flexDirection="column">
           {data?.picture && (
-            <Hexagon mt={8} alt={data?.name} picture={data.picture} />
+            <Hexagon mt={6} alt={data?.name} picture={data.picture} />
           )}
           <Username isHeading={true} pubkey={pubkey} />
           <Bio

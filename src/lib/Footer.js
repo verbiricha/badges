@@ -15,16 +15,14 @@ export default function Footer() {
         Made with 💜 by{" "}
         <Link
           color={highlight}
-          href="nostr:npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac"
-          isExternal
+          href="/p/1bc70a0148b3f316da33fe3c89f23e3e71ac4ff998027ec712b905cd24f6a411"
         >
           Karnage
         </Link>{" "}
         &{" "}
         <Link
           color={highlight}
-          href="nostr:npub107jk7htfv243u0x5ynn43scq9wrxtaasmrwwa8lfu2ydwag6cx2quqncxg"
-          isExternal
+          href="/p/7fa56f5d6962ab1e3cd424e758c3002b8665f7b0d8dcee9fe9e288d7751ac194"
         >
           verbiricha
         </Link>
