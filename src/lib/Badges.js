@@ -244,7 +244,7 @@ export default function Badges({ pubkey }) {
               }
             />
           )}
-          <Username isHeading={true} pubkey={pubkey} />
+          <Username isHeading={true} pubkey={pubkey} textAlign="center" />
           <Bio
             color={secondary}
             mt={2}
