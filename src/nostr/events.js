@@ -1,3 +1,7 @@
+import {
+  getEventHash,
+  signEvent as signEventWithPrivateKey,
+} from "nostr-tools";
 import { bech32ToHex, decodeNaddr } from "./encoding";
 import { findTag, findTags } from "./tags";
 
@@ -55,7 +59,13 @@ export async function sign(ev, replaceTags = true) {
   return await window.nostr.signEvent(ev);
 }
 
-export async function signEvent(ev) {
+export async function signEvent(ev, privateKey) {
+  if (privateKey) {
+    const signed = { ...ev };
+    signed.id = getEventHash(ev);
+    signed.sig = signEventWithPrivateKey(ev, privateKey);
+    return signed;
+  }
   return await window.nostr.signEvent(ev);
 }
 

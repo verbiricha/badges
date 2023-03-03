@@ -19,7 +19,7 @@ import {
   useNostrEvents,
   useProfile,
   findTag,
-  sign,
+  signEvent,
 } from "../nostr";
 import Bevel from "./Bevel";
 import Hexagon from "./Hexagon";
@@ -87,7 +87,7 @@ function useAwardedBadges(pubkey) {
 function Awarded({ pubkey }) {
   const toast = useToast();
   const { publish } = useNostr();
-  const { user, badges } = useSelector((s) => s.relay);
+  const { user, badges, privateKey } = useSelector((s) => s.relay);
   const accepted = useAcceptedBadges(pubkey);
   const awarded = useAwardedBadges(pubkey);
   const aTags = accepted.filter((t) => t[0] === "a").map((t) => t[1]);
@@ -117,7 +117,8 @@ function Awarded({ pubkey }) {
             content: "",
           };
           try {
-            const signed = await sign(ev);
+            const signed = await signEvent(ev, privateKey);
+
             publish(signed);
             toast({
               title: "Badge accepted",
@@ -208,8 +209,16 @@ export default function Badges({ pubkey }) {
     <Flex flexDirection="column" alignItems="center">
       <Bevel>
         <Flex padding={2} alignItems="center" flexDirection="column">
-          {data?.picture && (
+          {data?.picture ? (
             <Hexagon mt={6} alt={data?.name} picture={data.picture} />
+          ) : (
+            <Hexagon
+              mt={6}
+              alt={data?.name}
+              picture={
+                "https://nostr.build/i/nostr.build_ebc4b655ecfed5e51fec816f4e2fd0daf242e29bfe6af70f2cdb524099a601b2.png"
+              }
+            />
           )}
           <Username isHeading={true} pubkey={pubkey} />
           <Bio

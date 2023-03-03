@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { nip19 } from "nostr-tools";
 import {
+  useToast,
   Flex,
   Button,
   Heading,
@@ -13,38 +14,52 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
+import { generatePrivateKey, getPublicKey } from "nostr-tools";
 
 import useColors from "./useColors";
 import { BadgeStatus } from "./BadgeProfile";
 import ActionButton from "./ActionButton";
 import useLoggedInUser from "./useLoggedInUser";
-import { getPubkey } from "./useNip05";
-import { setUser } from "../relaysStore";
+import { setUser, setPrivateKey } from "../relaysStore";
 
 export default function SignUp() {
+  const toast = useToast();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [npub, setNpub] = useState("");
+  const [nsec, setNsec] = useState("");
   const { highlight, secondary } = useColors();
   const { user, logIn } = useLoggedInUser();
 
-  async function loginWithNpub() {
-    // todo: nip-05
+  async function loginWithNsec() {
     try {
-      if (npub.startsWith("npub")) {
-        const decoded = nip19.decode(npub);
-        if (decoded && decoded.type === "npub") {
-          dispatch(setUser(decoded.data));
+      if (nsec.startsWith("nsec")) {
+        const decoded = nip19.decode(nsec);
+        if (decoded && decoded.type === "nsec") {
+          dispatch(setUser(getPublicKey(decoded.data)));
+          dispatch(setPrivateKey(decoded.data));
         }
       } else {
-        const pk = await getPubkey(npub);
-        if (pk) {
-          dispatch(setUser(pk));
-        }
+        setNsec("");
+        toast({
+          title: "Invalid nsec",
+          status: "error",
+        });
       }
     } catch (error) {
+      setNsec("");
+      toast({
+        title: "Invalid nsec",
+        status: "error",
+      });
       console.error(error);
     }
+  }
+
+  function signUp() {
+    const priv = generatePrivateKey();
+    const pk = getPublicKey(priv);
+    dispatch(setPrivateKey(priv));
+    dispatch(setUser(pk));
   }
 
   useEffect(() => {
@@ -67,7 +82,7 @@ export default function SignUp() {
       <Text color={secondary}>
         Sign up for a new account or enter existing keys to sign in!
       </Text>
-      <ActionButton isDisabled mt={4} width="100%">
+      <ActionButton mt={4} width="100%" onClick={signUp}>
         Sign up
       </ActionButton>
       {window.nostr && (
@@ -79,16 +94,16 @@ export default function SignUp() {
         or
       </BadgeStatus>
       <FormControl>
-        <FormLabel>Sign in with your npub</FormLabel>
+        <FormLabel>Sign in with your nsec</FormLabel>
         <Input
           type="text"
-          placeholder="npub..."
-          value={npub}
-          onChange={(e) => setNpub(e.target.value)}
+          placeholder="nsec..."
+          value={nsec}
+          onChange={(e) => setNsec(e.target.value)}
         />
         <FormHelperText>
           We recommend using an extension such as{" "}
-          <Link isExternal to="https://getalby.com/">
+          <Link to="https://getalby.com/">
             <Text as="span" color={highlight}>
               Alby
             </Text>
@@ -96,7 +111,7 @@ export default function SignUp() {
           to log in.
         </FormHelperText>
       </FormControl>
-      <Button mt={4} width="100%" onClick={loginWithNpub}>
+      <Button mt={4} width="100%" onClick={loginWithNsec}>
         Sign In
       </Button>
     </Flex>

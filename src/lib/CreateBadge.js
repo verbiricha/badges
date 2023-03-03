@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import {
@@ -17,13 +17,15 @@ import {
 
 import ActionButton from "./ActionButton";
 import Badge from "./Badge";
+import useColors from "./useColors";
 
 import { dateToUnix, signEvent, useNostr, encodeNaddr } from "../nostr";
 
 export default function CreateBadge() {
   const toast = useToast();
+  const { highlight } = useColors();
   const [createdBadge, setCreatedBadge] = useState();
-  const { user } = useSelector((s) => s.relay);
+  const { user, privateKey } = useSelector((s) => s.relay);
   const { publish } = useNostr();
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -52,6 +54,7 @@ export default function CreateBadge() {
     const ev = {
       kind: 30009,
       content: "",
+      pubkey: user,
       created_at: dateToUnix(),
       tags: [
         ["d", slug],
@@ -62,7 +65,7 @@ export default function CreateBadge() {
       ],
     };
     try {
-      const signed = await signEvent(ev);
+      const signed = await signEvent(ev, privateKey);
       publish(signed);
       setCreatedBadge(signed);
       toast({
@@ -140,6 +143,15 @@ export default function CreateBadge() {
     >
       <Heading mb={3}>Success!</Heading>
       <Text mb={4}>You have created a badge!</Text>
+      <Text mb={4}>
+        If you find this software useful consider{" "}
+        <Link to="https://www.lnurlpay.com/verbiricha@getalby.com" isExternal>
+          <Text as="span" color={highlight}>
+            donating sats to the developers
+          </Text>
+        </Link>
+        .
+      </Text>
       <Image src="/cat.png" alt="Success!" width="280px" height="322px" />
       <ActionButton mt={10} onClick={goToBadge}>
         Go to Badge

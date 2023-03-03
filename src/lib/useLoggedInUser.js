@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { setUser } from "../relaysStore";
+import { setUser, setPrivateKey } from "../relaysStore";
 import { setKey, removeKey } from "../storage";
 
 export default function useLoggedInUser() {
   const dispatch = useDispatch();
-  const { user } = useSelector((s) => s.relay);
+  const { privateKey, user } = useSelector((s) => s.relay);
 
   async function logIn() {
     if (window.nostr) {
@@ -20,15 +20,25 @@ export default function useLoggedInUser() {
   }
 
   function logOut() {
-    removeKey("p");
     dispatch(setUser());
+    dispatch(setPrivateKey());
   }
 
   useEffect(() => {
     if (user) {
-      setKey("p", user);
+      setKey("pubkey", user);
+    } else {
+      removeKey("pubkey", user);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (privateKey) {
+      setKey("privkey", privateKey);
+    } else {
+      removeKey("privkey");
+    }
+  }, [privateKey]);
 
   return { user, logIn, logOut };
 }

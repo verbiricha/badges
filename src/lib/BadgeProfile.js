@@ -57,6 +57,7 @@ export function BadgeStatus({ state, children, ...rest }) {
 }
 
 function AwardBadge({ ev, ...rest }) {
+  const { user, privateKey } = useSelector((s) => s.relay);
   const toast = useToast();
   const d = findTag(ev.tags, "d");
   const { publish } = useNostr();
@@ -89,14 +90,14 @@ function AwardBadge({ ev, ...rest }) {
       kind: BADGE_AWARD,
       created_at: dateToUnix(),
       content: "",
+      pubkey: user,
       tags: [
         ["a", `${BADGE_DEFINITION}:${ev.pubkey}:${d}`],
         ...ps.map((p) => ["p", p]),
       ],
     };
     try {
-      const signed = await signEvent(award);
-      console.log("signed", signed);
+      const signed = await signEvent(award, privateKey);
       publish(signed);
 
       toast({
@@ -175,13 +176,7 @@ export default function BadgeProfile({ ev, ...rest }) {
       <Bevel>
         <Flex padding={2} alignItems="center" flexDirection="column">
           {image && (
-            <Image
-              mt={12}
-              alt={name}
-              src={image}
-              width="190px"
-              height="210px"
-            />
+            <Image mt={12} alt={name} src={image} width="auto" height="210px" />
           )}
           {isMine && <BadgeStatus mt={2}>Created by you</BadgeStatus>}
           {!isMine && !collected && (
@@ -209,7 +204,7 @@ export default function BadgeProfile({ ev, ...rest }) {
         </Text>
       </Flex>
       <Flex
-        mt={3}
+        mt={8}
         color={secondary}
         width="260px"
         justifyContent="space-between"

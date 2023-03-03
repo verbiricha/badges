@@ -12,7 +12,8 @@ const defaultRelays = [
   { url: "wss://nostr.wine/", options: { read: true, write: true } },
 ];
 
-const user = getKey("p");
+const user = getKey("pubkey");
+const privateKey = getKey("privkey");
 const relays = getJsonKey(`r:${user}`) ?? defaultRelays;
 const follows = getJsonKey(`f:${user}`) ?? [];
 const contacts = getJsonKey(`c:${user}`) ?? [];
@@ -20,6 +21,7 @@ const badges = [];
 
 const initialState = {
   user,
+  privateKey,
   relays,
   follows,
   contacts,
@@ -51,6 +53,9 @@ export const relaySlice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
+    setPrivateKey(state, action) {
+      state.privateKey = action.payload;
+    },
     setBadges(state, action) {
       state.badges = action.payload;
     },
@@ -63,6 +68,7 @@ export const {
   removeRelay,
   setRelay,
   setUser,
+  setPrivateKey,
   setFollows,
   setContacts,
   setBadges,

@@ -34,10 +34,12 @@ export default function Badge({ ev, children, ...rest }) {
       <CardHeader>
         <Link to={`/b/${encodeNaddr(ev)}`}>
           <Flex alignItems="flex-start">
-            <Box width="60px" height="60px" mr={2}>
+            <Box mr={2}>
               <Image
                 src={image || thumb}
                 alt={name}
+                height="auto"
+                width="60px"
                 fallbackSrc="https://via.placeholder.com/60"
               />
             </Box>

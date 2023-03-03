@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import {
@@ -17,6 +17,7 @@ import {
 
 import ActionButton from "./ActionButton";
 import Badge from "./Badge";
+import useColors from "./useColors";
 
 import {
   dateToUnix,
@@ -32,6 +33,7 @@ export default function EditBadge({ ev }) {
   const { user } = useSelector((s) => s.relay);
   const { publish } = useNostr();
   const navigate = useNavigate();
+  const { highlight } = useColors();
 
   const slug = findTag(ev.tags, "d");
   const defaultName = findTag(ev.tags, "name");
@@ -144,6 +146,15 @@ export default function EditBadge({ ev }) {
     >
       <Heading mb={3}>Success!</Heading>
       <Text mb={4}>You have updated a badge!</Text>
+      <Text mb={4}>
+        If you find this software useful consider{" "}
+        <Link to="https://www.lnurlpay.com/verbiricha@getalby.com" isExternal>
+          <Text as="span" color={highlight}>
+            donating sats to the developers
+          </Text>
+        </Link>
+        .
+      </Text>
       <Image src="/cat.png" alt="Success!" width="280px" height="322px" />
       <ActionButton mt={10} onClick={goToBadge}>
         Go to Badge
