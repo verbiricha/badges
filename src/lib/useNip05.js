@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getKey, setKey } from "../storage";
 
 export async function getPubkey(nip05) {
@@ -37,6 +37,25 @@ export default function useNip05(s) {
       });
     }
   });
+
+  useEffect(() => {
+    if (!s.includes("@") && s.match(/[0-9A-Fa-f]{64}/g)) {
+      setPubkey(s);
+    } else {
+      const key = !s.includes("@") ? `_@${s}` : s;
+      const cached = getKey(key);
+      if (cached) {
+        setPubkey(s);
+        return;
+      }
+      getPubkey(key).then((pk) => {
+        if (pk) {
+          setPubkey(pk);
+          setKey(key, pk);
+        }
+      });
+    }
+  }, [s]);
 
   return pubkey;
 }
