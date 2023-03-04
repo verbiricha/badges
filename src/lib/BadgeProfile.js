@@ -10,6 +10,7 @@ import {
   Button,
   FormLabel,
   Input,
+  Textarea,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { nip19 } from "nostr-tools";
@@ -62,8 +63,17 @@ function AwardBadge({ ev, ...rest }) {
   const d = findTag(ev.tags, "d");
   const { publish } = useNostr();
   const [value, setValue] = useState("");
+  const [hexValue, setHexValue] = useState("");
   const [ps, setPs] = useState([]);
   const { secondary } = useColors();
+
+  async function bulkAdd() {
+    const newPs = hexValue
+      .split(" ")
+      .filter((p) => p.match(/[0-9A-Fa-f]{64}/g));
+    setPs([...new Set([...ps, ...newPs])]);
+    setHexValue("");
+  }
 
   async function addUser() {
     try {
@@ -131,6 +141,23 @@ function AwardBadge({ ev, ...rest }) {
             isDisabled={value.trim().length === 0}
             ml={2}
             onClick={addUser}
+          >
+            Add
+          </Button>
+        </Flex>
+      </FormControl>
+      <FormControl mt={3}>
+        <FormLabel>HEX keys</FormLabel>
+        <Flex alignItems="center">
+          <Textarea
+            placeholder="one or more HEX keys"
+            value={hexValue}
+            onChange={(e) => setHexValue(e.target.value)}
+          />
+          <Button
+            isDisabled={hexValue.trim().length === 0}
+            ml={2}
+            onClick={bulkAdd}
           >
             Add
           </Button>
