@@ -14,6 +14,10 @@ export function useAwardedBadges(pubkey) {
     return events.map((ev) => findTag(ev.tags, "a")?.split(":").at(2));
   }, [events]);
 
+  const pubkeys = useMemo(() => {
+    return events.map((ev) => findTag(ev.tags, "a")?.split(":").at(1));
+  }, [events]);
+
   const dTagsById = useMemo(() => {
     const dAndId = events.map((ev) => [
       findTag(ev.tags, "a")?.split(":").at(2),
@@ -28,6 +32,7 @@ export function useAwardedBadges(pubkey) {
     filter: {
       kinds: [BADGE_DEFINITION],
       "#d": dTags,
+      authors: pubkeys,
     },
   });
 
