@@ -154,15 +154,16 @@ function AwardBadge({ ev, ...rest }) {
 }
 
 export default function BadgeProfile({ ev, ...rest }) {
-  const { user } = useSelector((s) => s.relay);
+  const { user, badges } = useSelector((s) => s.relay);
   const isMine = user === ev.pubkey;
-  const collected = false;
-  const { secondary, highlight } = useColors();
   const d = findTag(ev.tags, "d");
+  const addr = `${BADGE_DEFINITION}:${ev.pubkey}:${d}`;
+  const collected = badges.find((t) => t[0] === "a" && t[1] === addr);
+  const { secondary, highlight } = useColors();
   const awards = useNostrEvents({
     filter: {
       kinds: [BADGE_AWARD],
-      "#a": [`${BADGE_DEFINITION}:${ev.pubkey}:${d}`],
+      "#a": [addr],
       authors: [ev.pubkey],
     },
   });
@@ -189,7 +190,9 @@ export default function BadgeProfile({ ev, ...rest }) {
               Collected
             </BadgeStatus>
           )}
-          <Heading fontSize="3xl">{name}</Heading>
+          <Heading textAlign="center" fontSize="3xl">
+            {name}
+          </Heading>
         </Flex>
       </Bevel>
       <Flex color={secondary} width="260px">

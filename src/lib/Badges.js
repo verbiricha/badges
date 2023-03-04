@@ -1,5 +1,4 @@
 import "./Badges.css";
-import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import {
   useToast,
@@ -28,6 +27,7 @@ import Username from "./Username";
 import Bio from "./Bio";
 import useColors from "./useColors";
 import { BADGE_AWARD, BADGE_DEFINITION, PROFILE_BADGES } from "../Const";
+import { useAwardedBadges, useAcceptedBadges } from "./useBadges";
 
 function Created({ pubkey }) {
   const { events } = useNostrEvents({
@@ -43,45 +43,6 @@ function Created({ pubkey }) {
       ))}
     </Flex>
   );
-}
-
-function useAwardedBadges(pubkey) {
-  const { events } = useNostrEvents({
-    filter: {
-      kinds: [BADGE_AWARD],
-      "#p": [pubkey],
-    },
-  });
-
-  const dTags = useMemo(() => {
-    return events.map((ev) => findTag(ev.tags, "a")?.split(":").at(2));
-  }, [events]);
-
-  const dTagsById = useMemo(() => {
-    const dAndId = events.map((ev) => [
-      findTag(ev.tags, "a")?.split(":").at(2),
-      ev.id,
-    ]);
-    return dAndId.reduce((acc, [d, id]) => {
-      return { ...acc, [d]: id };
-    }, {});
-  }, [events]);
-
-  const badges = useNostrEvents({
-    filter: {
-      kinds: [BADGE_DEFINITION],
-      "#d": dTags,
-    },
-  });
-
-  return badges.events.map((b) => {
-    const d = findTag(b.tags, "d");
-    const award = dTagsById[d];
-    return {
-      badge: b,
-      award,
-    };
-  });
 }
 
 function Awarded({ pubkey }) {
@@ -203,24 +164,12 @@ function chunks(array, chunkSize) {
   return result;
 }
 
-function useAcceptedBadges(pubkey) {
-  const { events } = useNostrEvents({
-    filter: {
-      kinds: [PROFILE_BADGES],
-      "#d": ["profile_badges"],
-      authors: [pubkey],
-    },
-  });
-  const ev = events[0];
-  return (ev?.tags ?? []).filter((t) => t[0] === "a" || t[0] === "e");
-}
-
 function Accepted({ pubkey }) {
   const badges = useAcceptedBadges(pubkey);
   return (
     <Flex flexDirection="column" className="badge-list">
       {chunks(badges, 2).map(([a, e]) => (
-        <AcceptedBadge a={a[1]} e={e[1]} />
+        <AcceptedBadge key={a[1]} a={a[1]} e={e[1]} />
       ))}
     </Flex>
   );
