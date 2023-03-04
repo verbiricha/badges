@@ -2,6 +2,7 @@ import {
   getEventHash,
   signEvent as signEventWithPrivateKey,
 } from "nostr-tools";
+import { Buffer } from "buffer";
 import { bech32ToHex, decodeNaddr } from "./encoding";
 import { findTag, findTags } from "./tags";
 
@@ -78,4 +79,31 @@ export function getMetadata(ev) {
     publishedAt: findTag(ev.tags, "published_at"),
     hashtags: findTags(ev.tags, "t"),
   };
+}
+
+export function difficulty(ev) {
+  const { id } = ev;
+  const nonce = findTag(ev.tags, "nonce");
+  if (!nonce) {
+    return 0;
+  }
+  const [, , target] = ev.tags.find((t) => t[0] === "nonce");
+  const idBuff = Buffer.from(id, "hex");
+  const leadingZeroes = clzbufferBE(idBuff);
+  if (Number(target) <= leadingZeroes) {
+    return leadingZeroes;
+  }
+}
+
+function clzbufferBE(buf) {
+  var nlz = 0;
+
+  for (var i = 0; i < buf.length; i++, nlz += 8) {
+    if (buf[i] === 0) continue;
+
+    nlz += Math.clz32(buf[i]) - 24;
+    break;
+  }
+
+  return nlz;
 }
