@@ -280,7 +280,7 @@ export default function BadgeProfile({ ev, ...rest }) {
         </Text>
       )}
       {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
-      {awards.events.map((a, idx) => {
+      {awards.events.reverse().map((a, idx) => {
         return (
           <>
             <Heading fontSize="xl" my={4}>
