@@ -110,7 +110,7 @@ function Awarded({ pubkey }) {
               <HStack mt={2} spacing={2}>
                 <Button
                   isDisabled={aTags.includes(atag)}
-                  colorScheme="green"
+                  colorScheme="purple"
                   onClick={acceptBadge}
                 >
                   Accept

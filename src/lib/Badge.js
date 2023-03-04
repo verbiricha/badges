@@ -1,14 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  Box,
-  Flex,
-  Image,
-  Heading,
-  Text,
-  Card,
-  CardHeader,
-  CardBody,
-} from "@chakra-ui/react";
+import { Box, Flex, Image, Heading, Text } from "@chakra-ui/react";
 
 import { encodeNaddr, findTag } from "../nostr";
 
@@ -22,44 +13,46 @@ export default function Badge({ ev, children, ...rest }) {
   const description = findTag(ev.tags, "description");
   const image = findTag(ev.tags, "image");
   const thumb = findTag(ev.tags, "thumb");
+  const href = `/b/${encodeNaddr(ev)}`;
   return (
-    <Card
+    <Flex
+      flexDirection="column"
       background={surface}
       borderRadius="23px"
       border="2px solid"
       maxWidth="420px"
+      padding={4}
       borderColor={border}
       {...rest}
     >
-      <CardHeader>
-        <Link to={`/b/${encodeNaddr(ev)}`}>
-          <Flex alignItems="flex-start">
-            <Box mr={2}>
-              <Image
-                src={image || thumb}
-                alt={name}
-                height="auto"
-                width="60px"
-                fallbackSrc="https://via.placeholder.com/60"
-              />
-            </Box>
-            <Flex flexDirection="column">
-              <Heading fontSize="16px" fontWeight={700} lineHeight="23px">
-                {name || d}
-              </Heading>
-            </Flex>
-          </Flex>
+      <Flex flexDirection="row" alignItems="flex-start">
+        <Link to={href}>
+          <Box mr={2}>
+            <Image
+              src={image || thumb}
+              alt={name}
+              maxWidth="60px"
+              fallbackSrc="https://via.placeholder.com/60"
+            />
+          </Box>
         </Link>
-      </CardHeader>
-      <CardBody color={secondary} mt="-53px" ml="70px" pt={0}>
-        <Text fontSize="13px" fontWeight={500} lineHeight="19px">
-          {description}
-        </Text>
-        <Text mt={1} fontSize="xs">
-          By: <Username color={highlight} pubkey={ev.pubkey} />
-        </Text>
-        {children}
-      </CardBody>
-    </Card>
+        <Flex alignItems="flex-start" flexDirection="column">
+          <Link to={href}>
+            <Heading fontSize="16px" fontWeight={700} lineHeight="23px">
+              {name || d}
+            </Heading>
+          </Link>
+          <Flex color={secondary} pt={0}>
+            <Text fontSize="13px" fontWeight={500} lineHeight="19px">
+              {description}
+            </Text>
+          </Flex>
+          <Text mt={1} fontSize="xs">
+            By: <Username color={highlight} pubkey={ev.pubkey} />
+          </Text>
+          {children}
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }

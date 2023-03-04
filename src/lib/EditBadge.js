@@ -118,7 +118,7 @@ export default function EditBadge({ ev }) {
           onChange={(e) => setImageUrl(e.target.value)}
         />
         <FormHelperText>
-          We recommend an SVG or a PNG of no less than 1024x1024 pixels.
+          We recommend a WebP or a PNG of no less than 1024x1024 pixels.
         </FormHelperText>
       </FormControl>
       <FormControl mt={3}>
