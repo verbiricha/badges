@@ -279,7 +279,21 @@ export default function BadgeProfile({ ev, ...rest }) {
           You have not collected this badge yet.
         </Text>
       )}
-      {isMine && <AwardBadge mt={4} ev={ev} />}
+      {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
+      {awards.events.map((a, idx) => {
+        return (
+          <>
+            <Heading fontSize="xl" my={4}>
+              Award #{idx + 1}
+            </Heading>
+            {a.tags
+              .filter((t) => t[0] === "p")
+              .map((t) => {
+                return <User mb={2} pubkey={t[1]} />;
+              })}
+          </>
+        );
+      })}
     </Flex>
   );
 }

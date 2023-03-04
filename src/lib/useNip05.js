@@ -21,7 +21,7 @@ export default function useNip05(s) {
   const [pubkey, setPubkey] = useState(() => {
     if (!s) {
       return;
-    } else if (!s.includes("@") && s.match(/[0-9A-Fa-f]{64}/g)) {
+    } else if (s.match(/[0-9A-Fa-f]{64}/g)) {
       return s;
     } else {
       const key = !s.includes("@") ? `_@${s}` : s;
@@ -39,7 +39,7 @@ export default function useNip05(s) {
   });
 
   useEffect(() => {
-    if (!s.includes("@") && s.match(/[0-9A-Fa-f]{64}/g)) {
+    if (s.match(/[0-9A-Fa-f]{64}/g)) {
       setPubkey(s);
     } else {
       const key = !s.includes("@") ? `_@${s}` : s;
