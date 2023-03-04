@@ -177,7 +177,7 @@ export default function BadgeProfile({ ev, ...rest }) {
       <Bevel>
         <Flex padding={2} alignItems="center" flexDirection="column">
           {image && (
-            <Image mt={12} alt={name} src={image} width="auto" height="210px" />
+            <Image mt={16} alt={name} src={image} width="auto" height="210px" />
           )}
           {isMine && <BadgeStatus mt={2}>Created by you</BadgeStatus>}
           {!isMine && !collected && (
@@ -190,7 +190,7 @@ export default function BadgeProfile({ ev, ...rest }) {
               Collected
             </BadgeStatus>
           )}
-          <Heading textAlign="center" fontSize="3xl">
+          <Heading textAlign="center" fontSize="2xl">
             {name}
           </Heading>
         </Flex>
@@ -198,9 +198,8 @@ export default function BadgeProfile({ ev, ...rest }) {
       <Flex color={secondary} width="260px">
         <Text
           color={secondary}
-          fontSize="16px"
+          fontSize="md"
           fontWeight={500}
-          lineHeight="24px"
           textAlign="center"
         >
           {description}
@@ -238,6 +237,11 @@ export default function BadgeProfile({ ev, ...rest }) {
         <Text>Times awarded</Text>
         <Text>{awards.events.length}</Text>
       </Flex>
+      {isMine && (
+        <Link to={`/b/${naddr}/edit`}>
+          <Button mt={4}>Edit</Button>
+        </Link>
+      )}
       {!isMine && !collected && (
         <Text
           color={secondary}
@@ -247,11 +251,6 @@ export default function BadgeProfile({ ev, ...rest }) {
         >
           You have not collected this badge yet.
         </Text>
-      )}
-      {isMine && (
-        <Link to={`/b/${naddr}/edit`}>
-          <Button mt={4}>Edit</Button>
-        </Link>
       )}
       {isMine && <AwardBadge mt={4} ev={ev} />}
     </Flex>

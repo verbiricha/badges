@@ -183,17 +183,23 @@ export default function Badges({ pubkey }) {
       <Bevel>
         <Flex padding={2} alignItems="center" flexDirection="column">
           {data?.picture ? (
-            <Hexagon mt={6} alt={data?.name} picture={data.picture} />
+            <Hexagon mt={12} alt={data?.name} picture={data.picture} />
           ) : (
             <Hexagon
-              mt={6}
+              mt={12}
               alt={data?.name}
               picture={
                 "https://nostr.build/i/nostr.build_ebc4b655ecfed5e51fec816f4e2fd0daf242e29bfe6af70f2cdb524099a601b2.png"
               }
             />
           )}
-          <Username isHeading={true} pubkey={pubkey} textAlign="center" />
+          <Username
+            fontSize="2xl"
+            fontWeight={700}
+            isHeading={true}
+            pubkey={pubkey}
+            textAlign="center"
+          />
           <Bio
             color={secondary}
             mt={2}
@@ -205,7 +211,7 @@ export default function Badges({ pubkey }) {
           />
         </Flex>
       </Bevel>
-      <Tabs width="340px">
+      <Tabs mt={4} width="340px">
         <TabList justifyContent="space-around" borderBottom="none">
           <Tab>Accepted</Tab>
           <Tab>Awarded</Tab>
