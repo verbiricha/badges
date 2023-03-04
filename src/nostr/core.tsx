@@ -17,7 +17,7 @@ import {
   Sub,
 } from "nostr-tools";
 
-import { uniqBy } from "./utils";
+import { uniqByFn, getEventId } from "./utils";
 
 type OnConnectFunc = (relay: Relay) => void;
 type OnDisconnectFunc = (relay: Relay) => void;
@@ -203,8 +203,9 @@ export function useNostrEvents({
 
       onEventCallback?.(event);
       setEvents((_events) => {
-        const newEvents = [event, ..._events];
-        const uniqEvents = newEvents.length > 0 ? uniqBy(newEvents, "id") : [];
+        const newEvents = [..._events, event];
+        const uniqEvents =
+          newEvents.length > 0 ? uniqByFn(newEvents, getEventId) : [];
         uniqEvents.sort((a, b) => b.created_at - a.created_at);
         return uniqEvents;
       });
