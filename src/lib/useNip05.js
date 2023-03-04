@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { nip19 } from "nostr-tools";
 import { getKey, setKey } from "../storage";
 
 export async function getPubkey(nip05) {
@@ -21,6 +22,11 @@ export default function useNip05(s) {
   const [pubkey, setPubkey] = useState(() => {
     if (!s) {
       return;
+    } else if (s.startsWith("npub")) {
+      const decoded = nip19.decode(s);
+      if (decoded.type === "npub") {
+        return decoded.data;
+      }
     } else if (s.match(/[0-9A-Fa-f]{64}/g)) {
       return s;
     } else {
@@ -41,6 +47,11 @@ export default function useNip05(s) {
   useEffect(() => {
     if (s.match(/[0-9A-Fa-f]{64}/g)) {
       setPubkey(s);
+    } else if (s.startsWith("npub")) {
+      const decoded = nip19.decode(s);
+      if (decoded.type === "npub") {
+        setPubkey(decoded.data);
+      }
     } else {
       const key = !s.includes("@") ? `_@${s}` : s;
       const cached = getKey(key);
