@@ -38,3 +38,7 @@ a {
 .editor .rc-md-editor {
   height: 100%;
 }
+
+.badge-description p:not(:last-child) {
+  margin: 0 0 12px 0;
+}

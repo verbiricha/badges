@@ -29,6 +29,7 @@ import { getPubkey } from "./useNip05";
 import ActionButton from "./ActionButton";
 import User from "./User";
 import Bevel from "./Bevel";
+import Markdown from "./Markdown";
 import Username from "./Username";
 import useColors from "./useColors";
 
@@ -222,15 +223,16 @@ export default function BadgeProfile({ ev, ...rest }) {
           </Heading>
         </Flex>
       </Bevel>
-      <Flex color={secondary} width="260px">
-        <Text
-          color={secondary}
-          fontSize="md"
-          fontWeight={500}
-          textAlign="center"
-        >
-          {description}
-        </Text>
+      <Flex
+        color={secondary}
+        flexDirection="column"
+        width="260px"
+        fontSize="md"
+        fontWeight={500}
+        textAlign="center"
+        className="badge-description"
+      >
+        <Markdown content={description} />
       </Flex>
       <Flex
         mt={8}

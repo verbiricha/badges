@@ -3,6 +3,7 @@ import { Box, Flex, Image, Heading, Text } from "@chakra-ui/react";
 
 import { encodeNaddr, findTag } from "../nostr";
 
+import Markdown from "./Markdown";
 import Username from "./Username";
 import useColors from "./useColors";
 
@@ -42,10 +43,16 @@ export default function Badge({ ev, children, ...rest }) {
               {name || d}
             </Heading>
           </Link>
-          <Flex color={secondary} pt={0}>
-            <Text fontSize="13px" fontWeight={500} lineHeight="19px">
-              {description}
-            </Text>
+          <Flex
+            flexDirection="column"
+            color={secondary}
+            pt={0}
+            fontSize="13px"
+            fontWeight={500}
+            lineHeight="19px"
+            className="badge-description"
+          >
+            <Markdown content={description} />
           </Flex>
           <Text mt={1} fontSize="xs">
             By: <Username color={highlight} pubkey={ev.pubkey} />
