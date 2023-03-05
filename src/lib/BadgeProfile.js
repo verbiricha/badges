@@ -280,18 +280,18 @@ export default function BadgeProfile({ ev, ...rest }) {
         </Text>
       )}
       {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
-      {awards.events.reverse().map((a, idx) => {
+      {awards.events.reverse().map((a) => {
         return (
-          <>
+          <div key={a.id}>
             <Heading fontSize="xl" my={4}>
-              Award #{idx + 1}
+              Award
             </Heading>
             {a.tags
               .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
               .map((t) => {
                 return <User showNip={false} mb={2} pubkey={t[1]} />;
               })}
-          </>
+          </div>
         );
       })}
     </Flex>
