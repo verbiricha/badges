@@ -130,11 +130,13 @@ function Awarded({ pubkey }) {
   );
 }
 
-function AcceptedBadge({ e, a }) {
+function AcceptedBadge({ user, e, a }) {
   const awards = useNostrEvents({
     filter: {
       ids: [e],
       kinds: [BADGE_AWARD],
+      "#a": [a],
+      "#p": [user],
     },
   });
   const award = awards.events[0];
@@ -169,7 +171,7 @@ function Accepted({ pubkey }) {
   return (
     <Flex flexDirection="column" className="badge-list">
       {chunks(badges, 2).map(([a, e]) => (
-        <AcceptedBadge key={a[1]} a={a[1]} e={e[1]} />
+        <AcceptedBadge user={pubkey} key={a[1]} a={a[1]} e={e[1]} />
       ))}
     </Flex>
   );

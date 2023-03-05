@@ -19,12 +19,11 @@ export function useAwardedBadges(pubkey) {
   }, [events]);
 
   const dTagsById = useMemo(() => {
-    const dAndId = events.map((ev) => [
-      findTag(ev.tags, "a")?.split(":").at(2),
-      ev.id,
-    ]);
-    return dAndId.reduce((acc, [d, id]) => {
-      return { ...acc, [d]: id };
+    const dAndId = events
+      .reverse()
+      .map((ev) => [findTag(ev.tags, "a")?.split(":").at(2), ev.pubkey, ev.id]);
+    return dAndId.reduce((acc, [d, pubkey, id]) => {
+      return { ...acc, [`${pubkey}:${d}`]: id };
     }, {});
   }, [events]);
 
@@ -38,7 +37,7 @@ export function useAwardedBadges(pubkey) {
 
   return badges.events.map((b) => {
     const d = findTag(b.tags, "d");
-    const award = dTagsById[d];
+    const award = dTagsById[`${b.pubkey}:${d}`];
     return {
       badge: b,
       award,
