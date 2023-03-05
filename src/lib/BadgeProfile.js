@@ -165,7 +165,7 @@ function AwardBadge({ ev, ...rest }) {
       </FormControl>
       <Flex flexDirection="column" mt={3}>
         {ps.map((p) => (
-          <User key={p} mb={2} pubkey={p} />
+          <User showNip={false} key={p} mb={2} pubkey={p} />
         ))}
       </Flex>
       <ActionButton
@@ -289,7 +289,7 @@ export default function BadgeProfile({ ev, ...rest }) {
             {a.tags
               .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
               .map((t) => {
-                return <User mb={2} pubkey={t[1]} />;
+                return <User showNip={false} mb={2} pubkey={t[1]} />;
               })}
           </>
         );
