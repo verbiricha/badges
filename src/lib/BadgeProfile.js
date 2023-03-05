@@ -69,7 +69,7 @@ function AwardBadge({ ev, ...rest }) {
 
   async function bulkAdd() {
     const newPs = hexValue
-      .split(" ")
+      .split(/\s+/)
       .filter((p) => p.match(/[0-9A-Fa-f]{64}/g));
     setPs([...new Set([...ps, ...newPs])]);
     setHexValue("");
@@ -287,7 +287,7 @@ export default function BadgeProfile({ ev, ...rest }) {
               Award #{idx + 1}
             </Heading>
             {a.tags
-              .filter((t) => t[0] === "p")
+              .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
               .map((t) => {
                 return <User mb={2} pubkey={t[1]} />;
               })}
