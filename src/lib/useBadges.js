@@ -13,7 +13,7 @@ export function useAwardedBadges(pubkey) {
   const dTags = useMemo(() => {
     return events
       .map((ev) => findTag(ev.tags, "a")?.split(":").at(2))
-      .filter((e) => e.trim().length > 0);
+      .filter((e) => e !== undefined);
   }, [events]);
 
   const pubkeys = useMemo(() => {
