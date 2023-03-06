@@ -30,13 +30,10 @@ export default function CreateBadge() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [slug, setSlug] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [thumbUrl, setThumbUrl] = useState("");
-  const isValidBadge = name.trim().length > 0;
-  const slug = name
-    .toLowerCase()
-    .replace(/ /g, "-")
-    .replace(/[^\w-]+/g, "");
+  const isValidBadge = name.trim().length > 0 && slug.trim().length > 0;
   // todo: resolutions
   const draft = {
     kind: 30009,
@@ -88,6 +85,18 @@ export default function CreateBadge() {
     <Flex margin="0 auto" px={4} flexDirection="column" maxWidth="720px">
       <Heading mb={3}>Create a badge</Heading>
       <FormControl>
+        <FormLabel>ID</FormLabel>
+        <Input
+          type="text"
+          placeholder="e.g. cool-cat"
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+        />
+        <FormHelperText>
+          This won't be shown anywhere, is just an internal ID.
+        </FormHelperText>
+      </FormControl>
+      <FormControl mt={3}>
         <FormLabel>Name</FormLabel>
         <Input
           type="text"
