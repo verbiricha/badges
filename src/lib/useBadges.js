@@ -55,6 +55,7 @@ export function useAcceptedBadges(pubkey) {
       kinds: [PROFILE_BADGES],
       "#d": ["profile_badges"],
       authors: [pubkey],
+      limit: 1,
     },
   });
   const sorted = useMemo(() => {
