@@ -13,7 +13,12 @@ export function useAwardedBadges(pubkey) {
   const dTags = useMemo(() => {
     return events
       .map((ev) => findTag(ev.tags, "a")?.split(":").at(2))
-      .filter((e) => e.trim().length > 0);
+      .filter((e) => {
+        if (e) {
+          return e.trim().length > 0;
+        }
+        return false;
+      });
   }, [events]);
 
   const pubkeys = useMemo(() => {
