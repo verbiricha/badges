@@ -11,7 +11,9 @@ export function useAwardedBadges(pubkey) {
   });
 
   const dTags = useMemo(() => {
-    return events.map((ev) => findTag(ev.tags, "a")?.split(":").at(2));
+    return events
+      .map((ev) => findTag(ev.tags, "a")?.split(":").at(2))
+      .filter((e) => e.trim().length > 0);
   }, [events]);
 
   const pubkeys = useMemo(() => {
@@ -35,14 +37,16 @@ export function useAwardedBadges(pubkey) {
     },
   });
 
-  return badges.events.map((b) => {
-    const d = findTag(b.tags, "d");
-    const award = dTagsById[`${b.pubkey}:${d}`];
-    return {
-      badge: b,
-      award,
-    };
-  });
+  return badges.events
+    .map((b) => {
+      const d = findTag(b.tags, "d");
+      const award = dTagsById[`${b.pubkey}:${d}`];
+      return {
+        badge: b,
+        award,
+      };
+    })
+    .filter(({ award }) => award);
 }
 
 export function useAcceptedBadges(pubkey) {
