@@ -34,7 +34,6 @@ function Created({ pubkey }) {
     filter: {
       kinds: [BADGE_DEFINITION],
       authors: [pubkey],
-      limit: 1,
     },
   });
   return (
@@ -148,7 +147,6 @@ function AcceptedBadge({ user, e, a }) {
       kinds: [Number(k)],
       "#d": [d],
       authors: [pubkey],
-      limit: 1,
     },
   });
   const badge = definitions.events[0];

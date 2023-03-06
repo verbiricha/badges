@@ -32,7 +32,7 @@ export function useAwardedBadges(pubkey) {
   const badges = useNostrEvents({
     filter: {
       kinds: [BADGE_DEFINITION],
-      "#d": dTags,
+      "#d": dTags.filter(d => d.length > 0),
       authors: pubkeys,
     },
   });
