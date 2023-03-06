@@ -71,6 +71,19 @@ function AwardBadge({ ev, ...rest }) {
   async function bulkAdd() {
     const newPs = hexValue
       .split(/\s+/)
+      .map((p) => {
+        if (p.startsWith("npub")) {
+          try {
+            const decoded = nip19.decode(p);
+            return decoded.data;
+          } catch (error) {
+            console.error(error);
+            return p;
+          }
+        } else {
+          return p;
+        }
+      })
       .filter((p) => p.match(/[0-9A-Fa-f]{64}/g));
     setPs([...new Set([...ps, ...newPs])]);
     setHexValue("");
@@ -78,18 +91,10 @@ function AwardBadge({ ev, ...rest }) {
 
   async function addUser() {
     try {
-      if (value.startsWith("npub")) {
-        const decoded = nip19.decode(value);
-        if (decoded.data) {
-          setPs((_ps) => ps.concat([decoded.data]));
-          setValue("");
-        }
-      } else {
-        const pk = await getPubkey(value);
-        if (pk) {
-          setPs((_ps) => ps.concat([pk]));
-          setValue("");
-        }
+      const pk = await getPubkey(value);
+      if (pk) {
+        setPs((_ps) => ps.concat([pk]));
+        setValue("");
       }
     } catch (error) {
       console.error(error);
@@ -130,11 +135,11 @@ function AwardBadge({ ev, ...rest }) {
       </Heading>
       <Text color={secondary}>Add users by their npub or NIP-05:</Text>
       <FormControl mt={3}>
-        <FormLabel>NIP-05 or npub</FormLabel>
+        <FormLabel>NIP-05</FormLabel>
         <Flex alignItems="center">
           <Input
             type="text"
-            placeholder="npub or NIP-05"
+            placeholder="NIP-05"
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -148,10 +153,10 @@ function AwardBadge({ ev, ...rest }) {
         </Flex>
       </FormControl>
       <FormControl mt={3}>
-        <FormLabel>HEX keys</FormLabel>
+        <FormLabel>npub or HEX keys</FormLabel>
         <Flex alignItems="center">
           <Textarea
-            placeholder="one or more HEX keys"
+            placeholder="one or more npub/HEX keys"
             value={hexValue}
             onChange={(e) => setHexValue(e.target.value)}
           />
