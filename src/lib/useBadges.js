@@ -13,7 +13,7 @@ export function useAwardedBadges(pubkey) {
   const dTags = useMemo(() => {
     return events
       .map((ev) => findTag(ev.tags, "a")?.split(":").at(2))
-      .filter((e) => e.trim().length > 0);
+      .filter((e) => e !== undefined);
   }, [events]);
 
   const pubkeys = useMemo(() => {
@@ -55,6 +55,7 @@ export function useAcceptedBadges(pubkey) {
       kinds: [PROFILE_BADGES],
       "#d": ["profile_badges"],
       authors: [pubkey],
+      limit: 1,
     },
   });
   const sorted = useMemo(() => {

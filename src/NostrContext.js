@@ -14,6 +14,7 @@ function NostrConnManager({ children }) {
       kinds: [PROFILE_BADGES],
       "#d": ["profile_badges"],
       authors: [user],
+      limit: 1,
     },
     enabled: Boolean(user),
   });
