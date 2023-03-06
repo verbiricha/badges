@@ -284,7 +284,13 @@ export default function BadgeProfile({ ev, ...rest }) {
       {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
       {awards.events.reverse().map((a) => {
         return (
-          <div key={a.id}>
+          <Flex
+            width="280px"
+            alignItems="flex-start"
+            flexDirection="column"
+            key={a.id}
+            overflow="hidden"
+          >
             <Heading fontSize="xl" my={4}>
               Award
             </Heading>
@@ -293,7 +299,7 @@ export default function BadgeProfile({ ev, ...rest }) {
               .map((t) => {
                 return <User showNip={false} mb={2} pubkey={t[1]} />;
               })}
-          </div>
+          </Flex>
         );
       })}
     </Flex>
