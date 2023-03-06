@@ -119,7 +119,7 @@ function Awarded({ pubkey }) {
                   isDisabled={!aTags.includes(atag)}
                   onClick={rejectBadge}
                 >
-                  Reject
+                  Hide
                 </Button>
               </HStack>
             )}
