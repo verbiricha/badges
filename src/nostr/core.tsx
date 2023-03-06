@@ -204,6 +204,7 @@ export function useNostrEvents({
       onEventCallback?.(event);
       setEvents((_events) => {
         const newEvents = [..._events, event];
+        newEvents.sort((a, b) => a.created_at - b.created_at);
         const uniqEvents =
           newEvents.length > 0 ? uniqByFn(newEvents, getEventId) : [];
         uniqEvents.sort((a, b) => b.created_at - a.created_at);
