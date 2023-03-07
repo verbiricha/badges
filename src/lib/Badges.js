@@ -20,6 +20,7 @@ import {
   findTag,
   signEvent,
 } from "../nostr";
+import { chunks } from "./Util";
 import Bevel from "./Bevel";
 import Hexagon from "./Hexagon";
 import Badge from "./Badge";
@@ -156,14 +157,6 @@ function AcceptedBadge({ user, e, a }) {
     award &&
     badge.pubkey === award.pubkey && <Badge mb={3} width="340px" ev={badge} />
   );
-}
-
-function chunks(array, chunkSize) {
-  let result = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    result.push(array.slice(i, i + chunkSize));
-  }
-  return result;
 }
 
 function Accepted({ pubkey }) {

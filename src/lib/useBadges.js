@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useNostrEvents, findTag } from "../nostr";
 import { BADGE_AWARD, BADGE_DEFINITION, PROFILE_BADGES } from "../Const";
+import { chunks } from "./Util";
 
 export function useAwardedBadges(pubkey) {
   const { events } = useNostrEvents({
@@ -32,7 +33,7 @@ export function useAwardedBadges(pubkey) {
   const badges = useNostrEvents({
     filter: {
       kinds: [BADGE_DEFINITION],
-      "#d": dTags.filter(d => d.length > 0),
+      "#d": dTags.filter((d) => d.length > 0),
       authors: pubkeys,
     },
   });
