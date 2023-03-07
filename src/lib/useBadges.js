@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useNostrEvents, findTag } from "../nostr";
 import { BADGE_AWARD, BADGE_DEFINITION, PROFILE_BADGES } from "../Const";
-import { chunks } from "./Util";
 
 export function useAwardedBadges(pubkey) {
   const { events } = useNostrEvents({
@@ -65,5 +64,63 @@ export function useAcceptedBadges(pubkey) {
     return sorted;
   }, [events]);
   const ev = sorted[0];
-  return (ev?.tags ?? []).filter((t) => t[0] === "a" || t[0] === "e");
+
+  const tags = useMemo(() => {
+    return (ev?.tags ?? []).filter((t) => t[0] === "a" || t[0] === "e");
+  }, [ev]);
+
+  const dTags = useMemo(() => {
+    return tags
+      .filter((t) => t[0] === "a")
+      .map((t) => t[1]?.split(":").at(2))
+      .filter((e) => e !== undefined);
+  }, [tags]);
+
+  const pubkeys = useMemo(() => {
+    return tags
+      .filter((t) => t[0] === "a")
+      .map((t) => t[1]?.split(":").at(1))
+      .filter((e) => e !== undefined);
+  }, [tags]);
+
+  const awardIds = useMemo(() => {
+    return tags
+      .filter((t) => t[0] === "e")
+      .map((t) => t[1])
+      .filter((e) => e !== undefined);
+  }, [tags]);
+
+  const awards = useNostrEvents({
+    filter: {
+      kinds: [BADGE_AWARD],
+      ids: awardIds,
+    },
+  });
+
+  const badges = useNostrEvents({
+    filter: {
+      kinds: [BADGE_DEFINITION],
+      "#d": dTags.filter((d) => d.length > 0),
+      authors: pubkeys,
+    },
+  });
+
+  return badges.events
+    .map((b) => {
+      const d = findTag(b.tags, "d");
+      const award = awards.events.find((ev) => {
+        if (ev.pubkey === b.pubkey) {
+          const ref = findTag(ev.tags, "a");
+          if (ref) {
+            const [kind, pubkey, awardD] = ref.split(":");
+            return awardD === d;
+          }
+        }
+      });
+      return {
+        badge: b,
+        award,
+      };
+    })
+    .filter(({ award }) => award);
 }

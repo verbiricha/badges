@@ -46,13 +46,13 @@ function Created({ pubkey }) {
   );
 }
 
-function Awarded({ pubkey }) {
+function Awarded({ awarded, accepted, pubkey }) {
   const toast = useToast();
   const { publish } = useNostr();
   const { user, badges, privateKey } = useSelector((s) => s.relay);
-  const accepted = useAcceptedBadges(pubkey);
-  const awarded = useAwardedBadges(pubkey);
-  const aTags = accepted.filter((t) => t[0] === "a").map((t) => t[1]);
+  const acceptedBadges = accepted.map(
+    ({ badge }) => `${badge.kind}:${badge.pubkey}:${findTag(badge.tags, "d")}`
+  );
   const isMe = pubkey === user;
 
   return (
@@ -110,14 +110,14 @@ function Awarded({ pubkey }) {
             {isMe && (
               <HStack mt={2} spacing={2}>
                 <Button
-                  isDisabled={aTags.includes(atag)}
+                  isDisabled={acceptedBadges.includes(atag)}
                   colorScheme="purple"
                   onClick={acceptBadge}
                 >
                   Accept
                 </Button>
                 <Button
-                  isDisabled={!aTags.includes(atag)}
+                  isDisabled={!acceptedBadges.includes(atag)}
                   onClick={rejectBadge}
                 >
                   Hide
@@ -131,27 +131,7 @@ function Awarded({ pubkey }) {
   );
 }
 
-function AcceptedBadge({ user, e, a }) {
-  const awards = useNostrEvents({
-    filter: {
-      ids: [e],
-      kinds: [BADGE_AWARD],
-      "#a": [a],
-      "#p": [user],
-    },
-  });
-  const award = awards.events[0];
-
-  const [k, pubkey, d] = a.split(":");
-  const definitions = useNostrEvents({
-    filter: {
-      kinds: [Number(k)],
-      "#d": [d],
-      authors: [pubkey],
-    },
-  });
-  const badge = definitions.events[0];
-
+function AcceptedBadge({ user, award, badge }) {
   return (
     badge &&
     award &&
@@ -159,12 +139,11 @@ function AcceptedBadge({ user, e, a }) {
   );
 }
 
-function Accepted({ pubkey }) {
-  const badges = useAcceptedBadges(pubkey);
+function Accepted({ accepted, pubkey }) {
   return (
     <Flex flexDirection="column" className="badge-list">
-      {chunks(badges, 2).map(([a, e]) => (
-        <AcceptedBadge user={pubkey} key={a[1]} a={a[1]} e={e[1]} />
+      {accepted.map(({ badge, award }) => (
+        <AcceptedBadge user={pubkey} badge={badge} award={award} />
       ))}
     </Flex>
   );
@@ -173,6 +152,8 @@ function Accepted({ pubkey }) {
 export default function Badges({ pubkey }) {
   const { data } = useProfile({ pubkey });
   const { secondary } = useColors();
+  const awarded = useAwardedBadges(pubkey);
+  const accepted = useAcceptedBadges(pubkey);
   return (
     <Flex flexDirection="column" alignItems="center">
       <Bevel>
@@ -214,10 +195,10 @@ export default function Badges({ pubkey }) {
         </TabList>
         <TabPanels>
           <TabPanel px={0}>
-            <Accepted pubkey={pubkey} />
+            <Accepted accepted={accepted} pubkey={pubkey} />
           </TabPanel>
           <TabPanel px={0}>
-            <Awarded pubkey={pubkey} />
+            <Awarded awarded={awarded} accepted={accepted} pubkey={pubkey} />
           </TabPanel>
           <TabPanel px={0}>
             <Created pubkey={pubkey} />
