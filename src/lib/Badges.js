@@ -98,7 +98,7 @@ function Awarded({ awarded, accepted, pubkey }) {
             const signed = await signEvent(ev, privateKey);
             publish(signed);
             toast({
-              title: "Badge rejected",
+              title: "Badge hidden",
               status: "success",
             });
           } catch (error) {
