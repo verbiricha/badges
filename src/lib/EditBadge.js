@@ -30,7 +30,7 @@ import {
 export default function EditBadge({ ev }) {
   const toast = useToast();
   const [updatedBadge, setUpdatedBadge] = useState();
-  const { user } = useSelector((s) => s.relay);
+  const { user, privateKey } = useSelector((s) => s.relay);
   const { publish } = useNostr();
   const navigate = useNavigate();
   const { highlight } = useColors();
@@ -68,7 +68,7 @@ export default function EditBadge({ ev }) {
       created_at: dateToUnix(),
     };
     try {
-      const signed = await signEvent(ev);
+      const signed = await signEvent(ev, privateKey);
       publish(signed);
       setUpdatedBadge(signed);
       toast({
