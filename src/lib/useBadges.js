@@ -26,12 +26,12 @@ export function useAwardedBadges(pubkey) {
       .map((ev) => findTag(ev.tags, "a")?.split(":").at(1));
   }, [events]);
 
-  const dTagsById = useMemo(() => {
-    const dAndId = events
+  const awardsById = useMemo(() => {
+    const dAndEv = events
       .reverse()
-      .map((ev) => [findTag(ev.tags, "a")?.split(":").at(2), ev.pubkey, ev.id]);
-    return dAndId.reduce((acc, [d, pubkey, id]) => {
-      return { ...acc, [`${pubkey}:${d}`]: id };
+      .map((ev) => [findTag(ev.tags, "a")?.split(":").at(2), ev.pubkey, ev]);
+    return dAndEv.reduce((acc, [d, pubkey, ev]) => {
+      return { ...acc, [`${pubkey}:${d}`]: ev };
     }, {});
   }, [events]);
 
@@ -55,13 +55,14 @@ export function useAwardedBadges(pubkey) {
   return uniqByFn([...badges.events, ...badgesWithEmptyDTag.events], getEventId)
     .map((b) => {
       const d = findTag(b.tags, "d");
-      const award = dTagsById[`${b.pubkey}:${d}`];
+      const award = awardsById[`${b.pubkey}:${d}`];
       return {
         badge: b,
         award,
       };
     })
-    .filter(({ award }) => award);
+    .filter(({ award }) => award)
+    .sort((a, b) => b.award.created_at - a.award.created_at);
 }
 
 export function useAcceptedBadges(pubkey) {
@@ -155,5 +156,6 @@ export function useAcceptedBadges(pubkey) {
         award,
       };
     })
-    .filter(({ award }) => award);
+    .filter(({ award }) => award)
+    .sort((a, b) => b.award.created_at - a.award.created_at);
 }
