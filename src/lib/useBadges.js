@@ -41,6 +41,7 @@ export function useAwardedBadges(pubkey) {
       "#d": dTags.filter((d) => d.length > 0),
       authors: pubkeys,
     },
+    enabled: dTags.filter((d) => d.length > 0).length > 0 && pubkeys.length > 0,
   });
 
   const badgesWithEmptyDTag = useNostrEvents({
@@ -117,6 +118,7 @@ export function useAcceptedBadges(pubkey) {
       kinds: [BADGE_AWARD],
       ids: awardIds,
     },
+    enabled: awardIds.length > 0,
   });
 
   const badges = useNostrEvents({
@@ -125,6 +127,7 @@ export function useAcceptedBadges(pubkey) {
       "#d": dTags.filter((d) => d.length > 0),
       authors: pubkeys,
     },
+    enabled: dTags.filter((d) => d.length > 0).length > 0 && pubkeys.length > 0,
   });
 
   const badgesWithEmptyDTag = useNostrEvents({
