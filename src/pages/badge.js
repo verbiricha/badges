@@ -11,12 +11,14 @@ export default function Profile() {
   const { d, pubkey, k } = decodeNaddr(naddr);
   const { events } = useNostrEvents({
     filter: {
-      "#d": [d],
+      "#d": d ? [d] : undefined,
       authors: [pubkey],
       kinds: [k],
     },
   });
-  const ev = events?.at(0);
+  const ev = events?.find(
+    (ev) => ev.tags.find((t) => t[0] === "d")?.at(1) === d
+  );
 
   return (
     <>
