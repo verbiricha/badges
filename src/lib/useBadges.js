@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useNostrEvents, findTag } from "../nostr";
+import { useNostrEvents, findTag, uniqByFn, getEventId } from "../nostr";
 import { BADGE_AWARD, BADGE_DEFINITION, PROFILE_BADGES } from "../Const";
 
 export function useAwardedBadges(pubkey) {
@@ -20,6 +20,12 @@ export function useAwardedBadges(pubkey) {
     return events.map((ev) => findTag(ev.tags, "a")?.split(":").at(1));
   }, [events]);
 
+  const pubkeysWithEmptyDTag = useMemo(() => {
+    return events
+      .filter((ev) => findTag(ev.tags, "a")?.split(":").at(2).length === 0)
+      .map((ev) => findTag(ev.tags, "a")?.split(":").at(1));
+  }, [events]);
+
   const dTagsById = useMemo(() => {
     const dAndId = events
       .reverse()
@@ -37,7 +43,15 @@ export function useAwardedBadges(pubkey) {
     },
   });
 
-  return badges.events
+  const badgesWithEmptyDTag = useNostrEvents({
+    filter: {
+      kinds: [BADGE_DEFINITION],
+      authors: pubkeysWithEmptyDTag,
+    },
+    enabled: pubkeysWithEmptyDTag.length > 0,
+  });
+
+  return uniqByFn([...badges.events, ...badgesWithEmptyDTag.events], getEventId)
     .map((b) => {
       const d = findTag(b.tags, "d");
       const award = dTagsById[`${b.pubkey}:${d}`];
@@ -83,6 +97,14 @@ export function useAcceptedBadges(pubkey) {
       .filter((e) => e !== undefined);
   }, [tags]);
 
+  const pubkeysWithEmptyDTag = useMemo(() => {
+    return tags
+      .filter((t) => t[0] === "a")
+      .filter((t) => t[1]?.split(":").at(2).length === 0)
+      .map((t) => t[1]?.split(":").at(1))
+      .filter((e) => e !== undefined);
+  }, [tags]);
+
   const awardIds = useMemo(() => {
     return tags
       .filter((t) => t[0] === "e")
@@ -105,7 +127,15 @@ export function useAcceptedBadges(pubkey) {
     },
   });
 
-  return badges.events
+  const badgesWithEmptyDTag = useNostrEvents({
+    filter: {
+      kinds: [BADGE_DEFINITION],
+      authors: pubkeysWithEmptyDTag,
+    },
+    enabled: pubkeysWithEmptyDTag.length > 0,
+  });
+
+  return uniqByFn([...badges.events, ...badgesWithEmptyDTag.events], getEventId)
     .map((b) => {
       const d = findTag(b.tags, "d");
       const award = awards.events.find((ev) => {
