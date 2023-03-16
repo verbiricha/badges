@@ -59,7 +59,7 @@ export function BadgeStatus({ state, children, ...rest }) {
 }
 
 function AwardBadge({ ev, ...rest }) {
-  const { user, privateKey } = useSelector((s) => s.relay);
+  const { user, privateKey, relays } = useSelector((s) => s.relay);
   const toast = useToast();
   const d = findTag(ev.tags, "d");
   const { publish } = useNostr();
@@ -187,7 +187,7 @@ function AwardBadge({ ev, ...rest }) {
 }
 
 export default function BadgeProfile({ ev, ...rest }) {
-  const { user, badges, privateKey } = useSelector((s) => s.relay);
+  const { user, badges, privateKey, relays } = useSelector((s) => s.relay);
   const { publish } = useNostr();
   const toast = useToast();
   const isMine = user === ev.pubkey;
@@ -232,11 +232,13 @@ export default function BadgeProfile({ ev, ...rest }) {
       );
     }, []);
     const kind3Event = following.events[0];
-    let existingPubKeys = null;
-    if (!following.events[0]) {
+    let existingPubKeys = kind3Event?.tags?.map((t) => t[1]);
+    if (!existingPubKeys) {
+      toast({
+        title: "Could not fetch contact list",
+        status: "warning",
+      });
       return;
-    } else {
-      existingPubKeys = kind3Event.tags?.map((t) => t[1]);
     }
     const temp = new Set(existingPubKeys);
     for (const pubKey of pubkeysToAdd) {
