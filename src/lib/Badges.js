@@ -59,10 +59,10 @@ function Awarded({ awarded, accepted, pubkey }) {
     <Flex flexDirection="column" className="badge-list">
       {awarded.map(({ badge, award }) => {
         const d = findTag(badge.tags, "d");
-        const atag = `${badge.kind}:${badge.pubkey}:${d}`;
+        const atag = `${badge.kind}:${badge.pubkey}:${d ? d : ""}`;
         const accept = [
           ["a", atag],
-          ["e", award],
+          ["e", award.id],
         ];
         async function acceptBadge() {
           const ev = {
