@@ -59,7 +59,7 @@ export function BadgeStatus({ state, children, ...rest }) {
 }
 
 function AwardBadge({ ev, ...rest }) {
-  const { user, privateKey, relays } = useSelector((s) => s.relay);
+  const { user, privateKey } = useSelector((s) => s.relay);
   const toast = useToast();
   const d = findTag(ev.tags, "d");
   const { publish } = useNostr();
@@ -187,7 +187,7 @@ function AwardBadge({ ev, ...rest }) {
 }
 
 export default function BadgeProfile({ ev, ...rest }) {
-  const { user, badges, privateKey, relays } = useSelector((s) => s.relay);
+  const { user, badges, privateKey } = useSelector((s) => s.relay);
   const { publish } = useNostr();
   const toast = useToast();
   const isMine = user === ev.pubkey;
@@ -215,13 +215,11 @@ export default function BadgeProfile({ ev, ...rest }) {
   const image = findTag(ev.tags, "image");
   const naddr = encodeNaddr(ev);
   //const thumb = findTag(ev.tags, "thumb");
-
   async function followPubKeys(awardEvents) {
     const followEvent = {
       kind: CONTACT_LIST,
       tags: [],
       created_at: dateToUnix(),
-      content: "",
       pubkey: user,
     };
     const pubkeysToAdd = awardEvents.reduce((accumulator, a) => {
@@ -240,6 +238,7 @@ export default function BadgeProfile({ ev, ...rest }) {
       });
       return;
     }
+    followEvent.content = kind3Event.content;
     const temp = new Set(existingPubKeys);
     for (const pubKey of pubkeysToAdd) {
       temp.add(pubKey);
