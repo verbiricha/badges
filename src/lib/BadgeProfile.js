@@ -24,7 +24,7 @@ import {
   encodeNaddr,
 } from "../nostr";
 
-import { BADGE_AWARD, BADGE_DEFINITION } from "../Const";
+import { BADGE_AWARD, BADGE_DEFINITION, CONTACT_LIST } from "../Const";
 import { getPubkey } from "./useNip05";
 import ActionButton from "./ActionButton";
 import User from "./User";
@@ -187,7 +187,9 @@ function AwardBadge({ ev, ...rest }) {
 }
 
 export default function BadgeProfile({ ev, ...rest }) {
-  const { user, badges } = useSelector((s) => s.relay);
+  const { user, badges, privateKey } = useSelector((s) => s.relay);
+  const { publish } = useNostr();
+  const toast = useToast();
   const isMine = user === ev.pubkey;
   const d = findTag(ev.tags, "d");
   const addr = `${BADGE_DEFINITION}:${ev.pubkey}:${d}`;
@@ -200,11 +202,66 @@ export default function BadgeProfile({ ev, ...rest }) {
       authors: [ev.pubkey],
     },
   });
+
+  const following = useNostrEvents({
+    filter: {
+      kinds: [CONTACT_LIST],
+      authors: [user],
+    },
+  });
+
   const name = findTag(ev.tags, "name");
   const description = findTag(ev.tags, "description");
   const image = findTag(ev.tags, "image");
   const naddr = encodeNaddr(ev);
   //const thumb = findTag(ev.tags, "thumb");
+  async function followPubKeys(awardEvents) {
+    const followEvent = {
+      kind: CONTACT_LIST,
+      tags: [],
+      created_at: dateToUnix(),
+      pubkey: user,
+    };
+    const pubkeysToAdd = awardEvents.reduce((accumulator, a) => {
+      return accumulator.concat(
+        a.tags
+          .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
+          .map((t) => t[1])
+      );
+    }, []);
+    const kind3Event = following.events[0];
+    let existingPubKeys = kind3Event?.tags?.map((t) => t[1]);
+    if (!existingPubKeys) {
+      toast({
+        title: "Could not fetch contact list",
+        status: "warning",
+      });
+      return;
+    }
+    followEvent.content = kind3Event.content;
+    const temp = new Set(existingPubKeys);
+    for (const pubKey of pubkeysToAdd) {
+      temp.add(pubKey);
+    }
+    for (const pk of temp) {
+      if (pk.length !== 64) {
+        continue;
+      }
+      followEvent.tags.push(["p", pk]);
+    }
+    try {
+      const signed = await signEvent(followEvent, privateKey);
+      publish(signed);
+
+      toast({
+        title: "Followed All Awardees",
+        status: "success",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <Flex flexDirection="column" alignItems="center">
       <Bevel>
@@ -287,6 +344,13 @@ export default function BadgeProfile({ ev, ...rest }) {
         </Text>
       )}
       {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
+      <Button
+        onClick={() => {
+          followPubKeys(awards.events.reverse());
+        }}
+      >
+        Follow All Awardees
+      </Button>
       {awards.events.reverse().map((a) => {
         return (
           <Flex
