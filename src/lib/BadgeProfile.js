@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   useToast,
@@ -32,6 +32,10 @@ import Bevel from "./Bevel";
 import Markdown from "./Markdown";
 import Username from "./Username";
 import useColors from "./useColors";
+
+function dedupe(arr) {
+  return Array.from(new Set(arr));
+}
 
 export function BadgeStatus({ state, children, ...rest }) {
   const color = (() => {
@@ -215,20 +219,24 @@ export default function BadgeProfile({ ev, ...rest }) {
   const image = findTag(ev.tags, "image");
   const naddr = encodeNaddr(ev);
   //const thumb = findTag(ev.tags, "thumb");
-  async function followPubKeys(awardEvents) {
+  const awardees = useMemo(() => {
+    return dedupe(
+      awards.events.reduce((accumulator, a) => {
+        return accumulator.concat(
+          a.tags
+            .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
+            .map((t) => t[1])
+        );
+      }, [])
+    );
+  }, [awards.events]);
+  async function followAwardees() {
     const followEvent = {
       kind: CONTACT_LIST,
       tags: [],
       created_at: dateToUnix(),
       pubkey: user,
     };
-    const pubkeysToAdd = awardEvents.reduce((accumulator, a) => {
-      return accumulator.concat(
-        a.tags
-          .filter((t) => t[0] === "p" && t[1]?.match(/[0-9A-Fa-f]{64}/g))
-          .map((t) => t[1])
-      );
-    }, []);
     const kind3Event = following.events[0];
     let existingPubKeys = kind3Event?.tags?.map((t) => t[1]);
     if (!existingPubKeys) {
@@ -240,7 +248,7 @@ export default function BadgeProfile({ ev, ...rest }) {
     }
     followEvent.content = kind3Event.content;
     const temp = new Set(existingPubKeys);
-    for (const pubKey of pubkeysToAdd) {
+    for (const pubKey of awardees) {
       temp.add(pubKey);
     }
     for (const pk of temp) {
@@ -320,13 +328,22 @@ export default function BadgeProfile({ ev, ...rest }) {
       </Flex>
       <Flex
         mt={3}
-        mb={6}
         color={secondary}
         width="260px"
         justifyContent="space-between"
       >
         <Text>Times awarded</Text>
         <Text>{awards.events.length}</Text>
+      </Flex>
+      <Flex
+        mt={3}
+        mb={6}
+        color={secondary}
+        width="260px"
+        justifyContent="space-between"
+      >
+        <Text>Awardees</Text>
+        <Text>{awardees.length}</Text>
       </Flex>
       {isMine && (
         <Link to={`/b/${naddr}/edit`}>
@@ -339,18 +356,13 @@ export default function BadgeProfile({ ev, ...rest }) {
           fontWeight={600}
           fontSize="13px"
           lineHeight="19px"
+          mb={2}
         >
           You have not collected this badge yet.
         </Text>
       )}
       {isMine && <AwardBadge mt={4} mb={6} ev={ev} />}
-      <Button
-        onClick={() => {
-          followPubKeys(awards.events.reverse());
-        }}
-      >
-        Follow All Awardees
-      </Button>
+      <Button onClick={followAwardees}>Follow All Awardees</Button>
       {awards.events.reverse().map((a) => {
         return (
           <Flex
