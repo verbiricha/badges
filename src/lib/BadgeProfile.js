@@ -21,7 +21,7 @@ import {
   useNostr,
   useNostrEvents,
   findTag,
-  encodeNaddr,
+  encodeNaddr, difficulty,
 } from "../nostr";
 
 import { BADGE_AWARD, BADGE_DEFINITION, CONTACT_LIST } from "../Const";
@@ -326,6 +326,17 @@ export default function BadgeProfile({ ev, ...rest }) {
         <Text>Created by</Text>
         <Username color={highlight} pubkey={ev.pubkey} />
       </Flex>
+
+      <Flex
+          mt={3}
+          color={secondary}
+          width="260px"
+          justifyContent="space-between"
+      >
+        <Text title="Some badge collectors seek out high PoW badges just for their rarity.">PoW</Text>
+        <Text>{difficulty(ev)}</Text>
+      </Flex>
+
       <Flex
         mt={3}
         color={secondary}
